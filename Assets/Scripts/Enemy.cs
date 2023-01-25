@@ -5,12 +5,17 @@ using UnityEngine;
 public class Enemy : MonoBehaviour
 {
     
+    Animator _enemyAnim;
+    
     float _speed = 3.5f;
     private Player _player;
     // Start is called before the first frame update
     void Start()
     {
         _player = GameObject.Find("Player").GetComponent<Player>();
+        if (_player == null) Debug.Log("The Player is NULL");
+        _enemyAnim = GetComponent<Animator>();
+        if (_enemyAnim == null) Debug.Log("The Animator is NULL");
     }
 
     // Update is called once per frame
@@ -33,8 +38,11 @@ public class Enemy : MonoBehaviour
             } else{
                 Debug.LogError("PLAYER IS NULL!");
             }
-           
-            Destroy(gameObject);
+
+            _enemyAnim.SetTrigger("OnEnemyDeath");
+            _speed = 0;
+            
+            Destroy(gameObject, 2.5f);
         }
         if (other.tag == "Projectile")
         {
@@ -50,7 +58,10 @@ public class Enemy : MonoBehaviour
                 Debug.Log("_player is NULL");
             }
             Destroy (other.gameObject);
-            Destroy (gameObject);
+            _enemyAnim.SetTrigger("OnEnemyDeath");
+            _speed= 0;
+           
+            Destroy (gameObject, 2.5f);
         }
     }
 }
