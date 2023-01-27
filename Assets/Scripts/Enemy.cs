@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Assertions.Must;
 
 public class Enemy : MonoBehaviour
 {
@@ -41,7 +42,7 @@ public class Enemy : MonoBehaviour
 
             _enemyAnim.SetTrigger("OnEnemyDeath");
             _speed = 0;
-            
+            this.GetComponent<BoxCollider2D>().enabled = false;
             Destroy(gameObject, 2.5f);
         }
         if (other.tag == "Projectile")
@@ -59,8 +60,10 @@ public class Enemy : MonoBehaviour
             }
             Destroy (other.gameObject);
             _enemyAnim.SetTrigger("OnEnemyDeath");
+            
+
             _speed= 0;
-           
+            this.GetComponent<BoxCollider2D>().enabled = false;
             Destroy (gameObject, 2.5f);
         }
     }
