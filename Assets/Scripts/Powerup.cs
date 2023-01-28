@@ -40,7 +40,7 @@ public class Powerup : MonoBehaviour
                     _player.ShieldActive();
                     break;
             }
-            AudioSource.PlayClipAtPoint(_clip, transform.position);
+            AudioSource.PlayClipAtPoint(_clip, new Vector3(0, 1, -10),1f);
             Destroy(this.gameObject);
 
 

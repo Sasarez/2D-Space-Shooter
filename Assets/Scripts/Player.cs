@@ -171,6 +171,13 @@ public class Player : MonoBehaviour
         _isSpeedActive = false;
         StopCoroutine(SpeedPowerDown());
     }
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.tag == "Projectile" && collision.GetComponent<Laser>().WhoOwns() == 1)
+        {
+            Damage();
+        }
+    }
 }
 
 

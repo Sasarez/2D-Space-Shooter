@@ -11,6 +11,10 @@ public class Enemy : MonoBehaviour
     AudioSource _audioSource;
     float _speed = 3.5f;
     private Player _player;
+    [SerializeField]
+    private GameObject _laserPrefab;
+    [SerializeField]
+    private AudioClip _audioLaser;
     // Start is called before the first frame update
     void Start()
     {
@@ -20,6 +24,7 @@ public class Enemy : MonoBehaviour
         if (_enemyAnim == null) Debug.Log("The Animator is NULL");
         _audioSource = GetComponent<AudioSource>();
         if (_audioSource == null) Debug.LogError("AudioSource on the Enemy is NULL");
+        StartCoroutine("EnemyFire");
     }
 
     // Update is called once per frame
@@ -46,10 +51,11 @@ public class Enemy : MonoBehaviour
 
             _enemyAnim.SetTrigger("OnEnemyDeath");
             _speed = 0;
+            StopCoroutine("EnemyFire");
             this.GetComponent<BoxCollider2D>().enabled = false;
             Destroy(gameObject, 2.5f);
         }
-        if (other.tag == "Projectile")
+        if (other.tag == "Projectile" && other.GetComponent<Laser>().WhoOwns() == 0)
         {
             
 
@@ -64,12 +70,23 @@ public class Enemy : MonoBehaviour
             }
             Destroy (other.gameObject);
             _enemyAnim.SetTrigger("OnEnemyDeath");
-            
 
+            StopCoroutine("EnemyFire");
             _speed= 0;
             _audioSource.Play();
             this.GetComponent<BoxCollider2D>().enabled = false;
             Destroy (gameObject, 2.5f);
+        }
+        
+    }
+    private IEnumerator EnemyFire()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(Random.Range(2, 4));
+            GameObject laser = Instantiate(_laserPrefab, new Vector3(transform.position.x, transform.position.y -1.5f, 0), Quaternion.identity);
+            laser.GetComponent<Laser>().EnemyOwned();
+            AudioSource.PlayClipAtPoint(_audioLaser, new Vector3(0,1,-10),.4f);
         }
     }
 }
