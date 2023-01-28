@@ -35,6 +35,9 @@ public class Player : MonoBehaviour
     private GameObject _rightEngine;
     [SerializeField]
     private GameObject _leftEngine;
+    private AudioSource _audioSource;
+    [SerializeField]
+    private AudioClip _audioFire;
     // Start is called before the first frame update
     void Start()
     {
@@ -44,6 +47,9 @@ public class Player : MonoBehaviour
             Debug.Log("UI Manager is NULL");
         }
         transform.position = new Vector3(0, 0, 0);
+        _audioSource = GetComponent<AudioSource>();
+        if (_audioSource == null) Debug.LogError("AudioSource on the Player is NULL");
+        _audioSource.clip= _audioFire;
     }
 
     // Update is called once per frame
@@ -63,7 +69,8 @@ public class Player : MonoBehaviour
             {
                 Instantiate(_laser, transform.position + new Vector3(0, 1.08f, 0), Quaternion.identity);
             }
-
+            
+            _audioSource.Play();
         }
     }
 
@@ -122,6 +129,7 @@ public class Player : MonoBehaviour
         {
             _spawnManager = GameObject.Find("SpawnManager").GetComponent<SpawnManager>();
             _spawnManager.PlayerDied();
+            
             Destroy(gameObject);
         }
     }
@@ -149,6 +157,7 @@ public class Player : MonoBehaviour
         _isShieldActive = true;
         _shieldPrefab.SetActive(true);
     }
+
 
     IEnumerator TripleShotPowerDown()
     {

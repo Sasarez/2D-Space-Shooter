@@ -8,6 +8,7 @@ public class Enemy : MonoBehaviour
     
     Animator _enemyAnim;
     
+    AudioSource _audioSource;
     float _speed = 3.5f;
     private Player _player;
     // Start is called before the first frame update
@@ -17,6 +18,8 @@ public class Enemy : MonoBehaviour
         if (_player == null) Debug.Log("The Player is NULL");
         _enemyAnim = GetComponent<Animator>();
         if (_enemyAnim == null) Debug.Log("The Animator is NULL");
+        _audioSource = GetComponent<AudioSource>();
+        if (_audioSource == null) Debug.LogError("AudioSource on the Enemy is NULL");
     }
 
     // Update is called once per frame
@@ -36,6 +39,7 @@ public class Enemy : MonoBehaviour
             //Destroy (other.gameObject);
             if (player != null) {
                 player.Damage();
+                _audioSource.Play();
             } else{
                 Debug.LogError("PLAYER IS NULL!");
             }
@@ -63,6 +67,7 @@ public class Enemy : MonoBehaviour
             
 
             _speed= 0;
+            _audioSource.Play();
             this.GetComponent<BoxCollider2D>().enabled = false;
             Destroy (gameObject, 2.5f);
         }

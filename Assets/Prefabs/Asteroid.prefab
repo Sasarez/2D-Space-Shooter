@@ -139,3 +139,4 @@ MonoBehaviour:
   _speed: 18
   _spawnManager: {fileID: 0}
   _explosion: {fileID: 2973477699528209007, guid: 2237bfcab5655884f99ea60cb99cd45e, type: 3}
+  _audioSource: {fileID: 0}

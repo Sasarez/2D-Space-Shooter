@@ -11,10 +11,11 @@ public class Asteroid : MonoBehaviour
     [SerializeField]
     GameObject _explosion;
     GameObject explosion;
+    
     // Start is called before the first frame update
     void Start()
     {
-        
+       
     }
 
     // Update is called once per frame
@@ -29,7 +30,9 @@ public class Asteroid : MonoBehaviour
         {
             Destroy(collision.gameObject);
             explosion = Instantiate(_explosion, this.transform.position, Quaternion.identity);
+            
             Destroy(explosion, 2.38f);
+            
             Destroy(this.gameObject,.15f);
             _spawnManager.SetActive(true);
         }

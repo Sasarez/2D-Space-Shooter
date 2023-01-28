@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public class Powerup : MonoBehaviour
@@ -11,7 +12,8 @@ public class Powerup : MonoBehaviour
 
     [SerializeField]
     private int _powerUpType;
-
+    [SerializeField]
+    private AudioClip _clip;
 
     // Update is called once per frame
     void Update()
@@ -38,6 +40,7 @@ public class Powerup : MonoBehaviour
                     _player.ShieldActive();
                     break;
             }
+            AudioSource.PlayClipAtPoint(_clip, transform.position);
             Destroy(this.gameObject);
 
 
