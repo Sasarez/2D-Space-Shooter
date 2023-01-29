@@ -207,7 +207,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &433796492
 Transform:
   m_ObjectHideFlags: 0
@@ -1084,7 +1084,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 475b1dabe1aa44348bbd739ce0d68e8c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _enemy: {fileID: 8085138666016035910, guid: a8503ba9ba5db874498f0afeb0d02747, type: 3}
+  _enemyPrefab: {fileID: 8085138666016035910, guid: a8503ba9ba5db874498f0afeb0d02747, type: 3}
   _enemyContainer: {fileID: 891205723}
   _powerups:
   - {fileID: 2144609463502335212, guid: 754ebe7071b2d324c81fb458f5cbeb60, type: 3}

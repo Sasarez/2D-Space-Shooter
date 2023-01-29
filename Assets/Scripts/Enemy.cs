@@ -39,9 +39,7 @@ public class Enemy : MonoBehaviour
     {
         if (other.tag == "Player") 
         {
-            
             Player player = other.transform.GetComponent<Player>();
-            //Destroy (other.gameObject);
             if (player != null) {
                 player.Damage();
                 _audioSource.Play();

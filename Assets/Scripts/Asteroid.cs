@@ -6,17 +6,13 @@ public class Asteroid : MonoBehaviour
 {
     [SerializeField]
     int _speed = 18;
+
     [SerializeField]
     GameObject _spawnManager;
+
     [SerializeField]
     GameObject _explosion;
-    GameObject explosion;
     
-    // Start is called before the first frame update
-    void Start()
-    {
-       
-    }
 
     // Update is called once per frame
     void Update()
@@ -29,7 +25,7 @@ public class Asteroid : MonoBehaviour
         if (collision.tag == "Projectile")
         {
             Destroy(collision.gameObject);
-            explosion = Instantiate(_explosion, this.transform.position, Quaternion.identity);
+            GameObject explosion = Instantiate(_explosion, this.transform.position, Quaternion.identity);
             
             Destroy(explosion, 2.38f);
             

@@ -1,17 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditorInternal;
 using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    [SerializeField] private float _speed = 5f;
-    float horizontalInput;
-    float verticalInput;
+    [SerializeField] 
+    private float _speed = 5f;
+    private float _speedBoost = 2f;
+    private float _shieldHealth = 3f;
+    SpriteRenderer _shieldColor;
+    private float _masterSpeed;
+    private float _horizontalInput;
+    private float _verticalInput;
     [SerializeField]
     private float _fireRate = .45f;
-    private float _oldSpeed;
-    [SerializeField]
-    private float _powerUpSpeed = 8f;
     float _canFire = -1f;
     [SerializeField]
     private bool _isTripleShotActive = false;
@@ -50,6 +53,12 @@ public class Player : MonoBehaviour
         _audioSource = GetComponent<AudioSource>();
         if (_audioSource == null) Debug.LogError("AudioSource on the Player is NULL");
         _audioSource.clip= _audioFire;
+
+         _shieldColor = _shieldPrefab.GetComponent<SpriteRenderer>();
+        if (_shieldColor == null)
+        {
+            Debug.LogError("the SpriteRenderer on the Shield is NULL");
+        }
     }
 
     // Update is called once per frame
@@ -76,18 +85,29 @@ public class Player : MonoBehaviour
 
     void Movement()
     {
-        verticalInput = Input.GetAxis("Vertical");
-        horizontalInput = Input.GetAxis("Horizontal");
+        _verticalInput = Input.GetAxis("Vertical");
+        _horizontalInput = Input.GetAxis("Horizontal");
+        //Thruster effect, press shift to boost your speed
+        _masterSpeed = _speed;
+        _speedBoost = 1;
+
         if (_isSpeedActive)
         {
-            transform.Translate(Vector3.up * verticalInput * _powerUpSpeed * Time.deltaTime);
-            transform.Translate(Vector3.right * horizontalInput * _powerUpSpeed * Time.deltaTime);
+            _masterSpeed = _speed * 1.5f;
         }
-        else
+
+
+        if (Input.GetKey(KeyCode.LeftShift))
         {
-            transform.Translate(Vector3.up * verticalInput * _speed * Time.deltaTime);
-            transform.Translate(Vector3.right * horizontalInput * _speed * Time.deltaTime);
+            _speedBoost = 1.5f;
+
         }
+
+        transform.Translate(Vector3.up * _verticalInput * (_masterSpeed * _speedBoost) * Time.deltaTime);
+        transform.Translate(Vector3.right * _horizontalInput * (_masterSpeed * _speedBoost) * Time.deltaTime);
+
+
+
         if (transform.position.y < -3.97f)
         {
             transform.position = new Vector3(transform.position.x, -3.97f, 0);
@@ -109,9 +129,22 @@ public class Player : MonoBehaviour
     {
         if (_isShieldActive)
         {
-            _shieldPrefab.SetActive(false);
-            _isShieldActive = false;
-            return;
+            _shieldHealth--;
+            if (_shieldHealth == 2)
+            {
+                _shieldColor.color = Color.yellow;
+                return;
+            } else if (_shieldHealth == 1)
+            {
+                _shieldColor.color = Color.red;
+                return;
+            }else if (_shieldHealth <= 0)
+            {
+                _shieldPrefab.SetActive(false);
+                _isShieldActive = false;
+                return;
+            }
+            
         }
         _lives--;
 
@@ -154,8 +187,10 @@ public class Player : MonoBehaviour
     }
     public void ShieldActive()
     {
+        _shieldHealth = 3;
         _isShieldActive = true;
         _shieldPrefab.SetActive(true);
+        _shieldColor.color = Color.white;
     }
 
 

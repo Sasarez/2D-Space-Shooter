@@ -22,6 +22,7 @@ public class GameManager : MonoBehaviour
         if (Input.GetKeyUp(KeyCode.Escape))
             {
             Application.Quit();
+            
             }
     }
 }
