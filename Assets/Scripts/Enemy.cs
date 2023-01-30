@@ -5,9 +5,9 @@ using UnityEngine.Assertions.Must;
 
 public class Enemy : MonoBehaviour
 {
-    
+
     Animator _enemyAnim;
-    
+
     AudioSource _audioSource;
     float _speed = 3.5f;
     private Player _player;
@@ -30,20 +30,24 @@ public class Enemy : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        transform.Translate(Vector3.down *  _speed * Time.deltaTime);
-        if (transform.position.y < -5.41) {
-            transform.position = new Vector3(Random.Range(-8.5f,8.5f),8, 0) ;
+        transform.Translate(Vector3.down * _speed * Time.deltaTime);
+        if (transform.position.y < -5.41)
+        {
+            transform.position = new Vector3(Random.Range(-8.5f, 8.5f), 8, 0);
         }
     }
-    private void OnTriggerEnter2D(Collider2D other) 
+    private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.tag == "Player") 
+        if (other.tag == "Player")
         {
             Player player = other.transform.GetComponent<Player>();
-            if (player != null) {
+            if (player != null)
+            {
                 player.Damage();
                 _audioSource.Play();
-            } else{
+            }
+            else
+            {
                 Debug.LogError("PLAYER IS NULL!");
             }
 
@@ -55,36 +59,37 @@ public class Enemy : MonoBehaviour
         }
         if (other.tag == "Projectile" && other.GetComponent<Laser>().WhoOwns() == 0)
         {
-            
+
 
             if (_player != null)
             {
                 _player.AddScore(10);
-               
+
             }
             else
             {
                 Debug.Log("_player is NULL");
             }
-            Destroy (other.gameObject);
+            Destroy(other.gameObject);
             _enemyAnim.SetTrigger("OnEnemyDeath");
 
             StopCoroutine("EnemyFire");
-            _speed= 0;
+            _speed = 0;
             _audioSource.Play();
+            this.tag = "Undefined";
             this.GetComponent<BoxCollider2D>().enabled = false;
-            Destroy (gameObject, 2.5f);
+            Destroy(gameObject, 2.5f);
         }
-        
+
     }
     private IEnumerator EnemyFire()
     {
         while (true)
         {
             yield return new WaitForSeconds(Random.Range(2, 4));
-            GameObject laser = Instantiate(_laserPrefab, new Vector3(transform.position.x, transform.position.y -1.5f, 0), Quaternion.identity);
+            GameObject laser = Instantiate(_laserPrefab, new Vector3(transform.position.x, transform.position.y - 1.5f, 0), Quaternion.identity);
             laser.GetComponent<Laser>().EnemyOwned();
-            AudioSource.PlayClipAtPoint(_audioLaser, new Vector3(0,1,-10),.4f);
+            AudioSource.PlayClipAtPoint(_audioLaser, new Vector3(0, 1, -10), .4f);
         }
     }
 }

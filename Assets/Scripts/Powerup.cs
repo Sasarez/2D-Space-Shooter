@@ -39,8 +39,17 @@ public class Powerup : MonoBehaviour
                 case 2: //Shields Active
                     _player.ShieldActive();
                     break;
+                case 3: //Ammo Active
+                    _player.AmmoActive();
+                    break;
+                case 4: //Health Active
+                    _player.HealthActive();
+                    break;
+                case 5: //Special Active
+                    _player.SpecialActive();
+                    break;
             }
-            AudioSource.PlayClipAtPoint(_clip, new Vector3(0, 1, -10),1f);
+            AudioSource.PlayClipAtPoint(_clip, new Vector3(0, 1, -10), 1f);
             Destroy(this.gameObject);
 
 

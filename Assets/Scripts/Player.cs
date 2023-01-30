@@ -5,8 +5,9 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    [SerializeField] 
+    [SerializeField]
     private float _speed = 5f;
+    private int _ammoCount = 15;
     private float _speedBoost = 2f;
     private float _shieldHealth = 3f;
     SpriteRenderer _shieldColor;
@@ -18,6 +19,8 @@ public class Player : MonoBehaviour
     float _canFire = -1f;
     [SerializeField]
     private bool _isTripleShotActive = false;
+    [SerializeField]
+    private bool _isSpecialActive = false;
     private bool _isSpeedActive = false;
     private bool _isShieldActive = false;
     private int _lives = 3;
@@ -44,32 +47,45 @@ public class Player : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        _uiManager= GameObject.Find("UI_Manager").GetComponent<UIManager>();
-        if ( _uiManager == null )
+        _uiManager = GameObject.Find("UI_Manager").GetComponent<UIManager>();
+        if (_uiManager == null)
         {
             Debug.Log("UI Manager is NULL");
         }
         transform.position = new Vector3(0, 0, 0);
         _audioSource = GetComponent<AudioSource>();
         if (_audioSource == null) Debug.LogError("AudioSource on the Player is NULL");
-        _audioSource.clip= _audioFire;
+        _audioSource.clip = _audioFire;
 
-         _shieldColor = _shieldPrefab.GetComponent<SpriteRenderer>();
+        _shieldColor = _shieldPrefab.GetComponent<SpriteRenderer>();
         if (_shieldColor == null)
         {
             Debug.LogError("the SpriteRenderer on the Shield is NULL");
         }
     }
 
-    // Update is called once per frame
     void Update()
     {
         Movement();
+        Fire();
 
-        if (Input.GetKey("space") && Time.time > _canFire)
+    }
+
+    void Fire()
+    {
+        if (Input.GetKey("space") && Time.time > _canFire && _ammoCount > 0)
         {
+            _ammoCount--;
+            _uiManager.UpdateAmmo(_ammoCount);
             _canFire = Time.time + _fireRate;
-            if (_isTripleShotActive)
+            if (_isSpecialActive)
+            {
+                _ammoCount = 15;
+                _uiManager.UpdateAmmo(_ammoCount);
+                GameObject _hLaser = Instantiate(_laser, transform.position + new Vector3(0, 1.08f, 0), Quaternion.identity);
+                _hLaser.GetComponent<Laser>().Special();
+            }
+            else if (_isTripleShotActive && !_isSpecialActive)
             {
 
                 Instantiate(_tripleLaser, transform.position, Quaternion.identity);
@@ -78,11 +94,10 @@ public class Player : MonoBehaviour
             {
                 Instantiate(_laser, transform.position + new Vector3(0, 1.08f, 0), Quaternion.identity);
             }
-            
+
             _audioSource.Play();
         }
     }
-
     void Movement()
     {
         _verticalInput = Input.GetAxis("Vertical");
@@ -125,7 +140,7 @@ public class Player : MonoBehaviour
             transform.position = new Vector3(11.27f, transform.position.y, 0);
         }
     }
-    public void Damage()
+    public void ShieldCheck()
     {
         if (_isShieldActive)
         {
@@ -134,44 +149,37 @@ public class Player : MonoBehaviour
             {
                 _shieldColor.color = Color.yellow;
                 return;
-            } else if (_shieldHealth == 1)
+            }
+            else if (_shieldHealth == 1)
             {
                 _shieldColor.color = Color.red;
                 return;
-            }else if (_shieldHealth <= 0)
+            }
+            else if (_shieldHealth <= 0)
             {
                 _shieldPrefab.SetActive(false);
                 _isShieldActive = false;
                 return;
             }
-            
+
         }
         _lives--;
+    }
+    public void Damage()
+    {
 
-        if (_lives == 2)
-        {
-            _rightEngine.SetActive(true);
-        }
-        else if (_lives == 1)
-        {
-            _leftEngine.SetActive(true);   
-        }
+        ShieldCheck();
 
-        _uiManager.UpdateLives(_lives);
-        if (_lives < 1)
-        {
-            _spawnManager = GameObject.Find("SpawnManager").GetComponent<SpawnManager>();
-            _spawnManager.PlayerDied();
-            
-            Destroy(gameObject);
-        }
+        UpdateDamage();
+
+
     }
     public void AddScore(int score)
     {
-        
+
         _score += score;
         _uiManager.UpdateScore(_score);
-        
+
     }
     public void TripleShotActive()
     {
@@ -192,13 +200,63 @@ public class Player : MonoBehaviour
         _shieldPrefab.SetActive(true);
         _shieldColor.color = Color.white;
     }
+    public void AmmoActive()
+    {
+        _ammoCount = 15;
+        _uiManager.UpdateAmmo(_ammoCount);
+    }
+    public void SpecialActive()
+    {
+        _isSpecialActive = true;
+        AmmoActive();
+        StartCoroutine(SpecialPowerDown());
+    }
+    private void UpdateDamage()
+    {
+        if (_lives == 3)
+        {
+            _rightEngine.SetActive(false);
+            _leftEngine.SetActive(false);
+        }
+        else if (_lives == 2)
+        {
+            _rightEngine.SetActive(true);
+            _leftEngine.SetActive(false);
+        }
+        else if (_lives == 1)
+        {
+            _leftEngine.SetActive(true);
+            _rightEngine.SetActive(true);
+        }
+        _uiManager.UpdateLives(_lives);
+        if (_lives < 1)
+        {
+            _spawnManager = GameObject.Find("SpawnManager").GetComponent<SpawnManager>();
+            _spawnManager.PlayerDied();
 
+            Destroy(gameObject);
+        }
+    }
+    public void HealthActive()
+    {
+        if (_lives < 3)
+        {
+            _lives++;
+        }
+        UpdateDamage();
 
+    }
     IEnumerator TripleShotPowerDown()
     {
         yield return new WaitForSeconds(_powerUpTime);
         _isTripleShotActive = false;
         StopCoroutine(TripleShotPowerDown());
+    }
+    IEnumerator SpecialPowerDown()
+    {
+        yield return new WaitForSeconds(5);
+        _isSpecialActive = false;
+        StopCoroutine(SpecialPowerDown());
     }
     IEnumerator SpeedPowerDown()
     {
@@ -207,6 +265,7 @@ public class Player : MonoBehaviour
         StopCoroutine(SpeedPowerDown());
     }
     private void OnTriggerEnter2D(Collider2D collision)
+
     {
         if (collision.tag == "Projectile" && collision.GetComponent<Laser>().WhoOwns() == 1)
         {
@@ -214,5 +273,6 @@ public class Player : MonoBehaviour
         }
     }
 }
+
 
 

@@ -31,7 +31,24 @@ public class SpawnManager : MonoBehaviour
         {
             yield return new WaitForSeconds(Random.Range(3, 7) + 1);
             int _powerUpSelect = Random.Range(0, _powerups.Length);
+            if (_powerUpSelect == 5)
+            {
+                Debug.Log("Special Selected!");
+                int _secondaryRoll = Random.Range(0, 100);
+
+                if (_secondaryRoll >= 60)
+                {
+                    Debug.Log("Rerolled cause secondary check failed! " + _secondaryRoll + "Was rolled");
+                    _powerUpSelect = Random.Range(0, _powerups.Length);
+
+                }
+                else
+                {
+                    Debug.Log("Secondary Roll passed, the number was " + _secondaryRoll);
+                }
+            }
             Instantiate(_powerups[_powerUpSelect], new Vector3(Random.Range(-8.5f, 8.5f), 8, 0), Quaternion.identity);
+
         }
     }
     public void PlayerDied()
