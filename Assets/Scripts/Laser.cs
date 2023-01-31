@@ -49,7 +49,7 @@ public class Laser : MonoBehaviour
         }
         else
         {
-            Debug.Log("Normal Fire");
+            
             if (_owner == 0)
             {
                 transform.Translate(Vector3.up * _speed * Time.deltaTime);

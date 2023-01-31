@@ -15,6 +15,10 @@ public class Enemy : MonoBehaviour
     private GameObject _laserPrefab;
     [SerializeField]
     private AudioClip _audioLaser;
+    private Vector2 _spawnPosition;
+    private Vector3 _laserRotation;
+    [SerializeField]
+    private int _enemyEntrance; //0 top to bottom, 1 left to right, 2 right to left
     // Start is called before the first frame update
     void Start()
     {
@@ -27,14 +31,27 @@ public class Enemy : MonoBehaviour
         StartCoroutine("EnemyFire");
     }
 
+    public void SetEnemyType(int type)
+    {
+        _enemyEntrance = type;
+    }
     // Update is called once per frame
     void Update()
     {
-        transform.Translate(Vector3.down * _speed * Time.deltaTime);
+        transform.Translate(Vector2.down * _speed * Time.deltaTime);
         if (transform.position.y < -5.41)
         {
-            transform.position = new Vector3(Random.Range(-8.5f, 8.5f), 8, 0);
+            transform.position = new Vector2(Random.Range(-8.5f, 8.5f), 8);
+        } else if (transform.position.x < -9.2f)
+        {
+            transform.position = new Vector2(9.2f, Random.Range(-3.4f, 6.2f));
+        } else if (transform.position.x > 10f)
+        {
+            transform.position = new Vector2(-9.2f, Random.Range(-3.4f, 6.2f));
         }
+        
+        
+
     }
     private void OnTriggerEnter2D(Collider2D other)
     {
@@ -87,8 +104,27 @@ public class Enemy : MonoBehaviour
         while (true)
         {
             yield return new WaitForSeconds(Random.Range(2, 4));
-            GameObject laser = Instantiate(_laserPrefab, new Vector3(transform.position.x, transform.position.y - 1.5f, 0), Quaternion.identity);
+            switch (_enemyEntrance)
+            {
+                case 0:
+                    _spawnPosition = new Vector2(transform.position.x, transform.position.y -1.5f);
+                    _laserRotation = new Vector3(0, 0, 0);
+                    break;
+                case 1:
+                    _spawnPosition = new Vector2(transform.position.x + 1.5f, transform.position.y);
+                    _laserRotation = new Vector3(0, 0, 90);
+                    break;
+                case 2:
+                    _spawnPosition = new Vector2(transform.position.x - 1.5f, transform.position.y);
+                    _laserRotation = new Vector3(0, 0, -90);
+                    break;
+            }
+            
+            GameObject laser = Instantiate(_laserPrefab, _spawnPosition, Quaternion.identity);
+            
             laser.GetComponent<Laser>().EnemyOwned();
+            laser.transform.eulerAngles = _laserRotation;
+            
             AudioSource.PlayClipAtPoint(_audioLaser, new Vector3(0, 1, -10), .4f);
         }
     }

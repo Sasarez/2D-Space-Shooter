@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditorInternal;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -146,9 +145,9 @@ public class Player : MonoBehaviour
         {
             transform.position = new Vector3(transform.position.x, -3.97f, 0);
         }
-        else if (transform.position.y > 0)
+        else if (transform.position.y > 4.4f)
         {
-            transform.position = new Vector3(transform.position.x, 0, 0);
+            transform.position = new Vector3(transform.position.x, 4.4f, 0);
         }
         if (transform.position.x > 11.27f)
         {
