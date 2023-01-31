@@ -10,9 +10,9 @@ public class ScreenShake : MonoBehaviour
     [SerializeField]
     private float _shakeDuration;
     [SerializeField]
-    private float _shakeAmount = .2f;
+    private float _shakeAmount;
     [SerializeField]
-    private float _shakeFactor = .7f;
+    private float _shakeFactor;
 
     private Vector3 _startingPosition;
     // Start is called before the first frame update
@@ -20,7 +20,7 @@ public class ScreenShake : MonoBehaviour
     {
         if (_camera == null)
         {
-            _camera = GetComponent(typeof(Transform)) as Transform;
+            Debug.Log("The Camera is NULL");
         }
     }
 
