@@ -5,10 +5,14 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+
+    private ScreenShake _screenShake;
     [SerializeField]
     private float _speed = 5f;
+
     private int _ammoCount = 15;
     private float _speedBoost = 2f;
+    private float _thrusterGas = 200f;
     private float _shieldHealth = 3f;
     SpriteRenderer _shieldColor;
     private float _masterSpeed;
@@ -52,6 +56,11 @@ public class Player : MonoBehaviour
         {
             Debug.Log("UI Manager is NULL");
         }
+        _screenShake = GameObject.Find("ScreenShake").GetComponent<ScreenShake>();
+        if (_screenShake == null)
+        {
+            Debug.Log("Screen Shake is NULL");
+        }
         transform.position = new Vector3(0, 0, 0);
         _audioSource = GetComponent<AudioSource>();
         if (_audioSource == null) Debug.LogError("AudioSource on the Player is NULL");
@@ -66,11 +75,19 @@ public class Player : MonoBehaviour
 
     void Update()
     {
+        ThrusterCoolDown();
         Movement();
         Fire();
 
     }
+    void ThrusterCoolDown()
+    {
+        if (_thrusterGas <= 0)
+        {
+            StartCoroutine("ThrusterCoolingDown");
 
+        }
+    }
     void Fire()
     {
         if (Input.GetKey("space") && Time.time > _canFire && _ammoCount > 0)
@@ -112,8 +129,10 @@ public class Player : MonoBehaviour
         }
 
 
-        if (Input.GetKey(KeyCode.LeftShift))
+        if (Input.GetKey(KeyCode.LeftShift) && _thrusterGas > 0)
         {
+            _thrusterGas -= 1f;
+            _uiManager.UpdateGas(_thrusterGas);
             _speedBoost = 1.5f;
 
         }
@@ -163,6 +182,7 @@ public class Player : MonoBehaviour
             }
 
         }
+        _screenShake.ShakeScreen(1, .2f, 2f);
         _lives--;
     }
     public void Damage()
@@ -263,6 +283,13 @@ public class Player : MonoBehaviour
         yield return new WaitForSeconds(_powerUpTime);
         _isSpeedActive = false;
         StopCoroutine(SpeedPowerDown());
+    }
+    IEnumerator ThrusterCoolingDown()
+    {
+        yield return new WaitForSeconds(5f);
+        _thrusterGas = 200;
+        _uiManager.UpdateGas(_thrusterGas);
+        StopCoroutine("ThrusterCoolingDown");
     }
     private void OnTriggerEnter2D(Collider2D collision)
 

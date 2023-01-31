@@ -524,9 +524,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _speed: 8.5
+  _color: {r: 1, g: 0, b: 0, a: 0}
+  _thruster: {fileID: 300145874}
   _fireRate: 0.45
-  _powerUpSpeed: 12
   _isTripleShotActive: 0
+  _isSpecialActive: 0
   _spawnManager: {fileID: 0}
   _laser: {fileID: 761591880467372920, guid: 1a61095ea4f0dbe4a912951f62201ff6, type: 3}
   _tripleLaser: {fileID: 3872532915888162044, guid: 52f1bd6910849de4387ff61e9048d1dc, type: 3}
@@ -536,7 +538,6 @@ MonoBehaviour:
   _rightEngine: {fileID: 608638083}
   _leftEngine: {fileID: 2058489028}
   _audioFire: {fileID: 8300000, guid: 75676f361bdfeaf41a46623e95df3dbc, type: 3}
-  _audioPowerup: {fileID: 8300000, guid: 5ee343246919d2b4bba63ae629e95494, type: 3}
 --- !u!61 &4368748373545015711
 BoxCollider2D:
   m_ObjectHideFlags: 0

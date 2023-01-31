@@ -13,6 +13,8 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private Image _livesImage;
     [SerializeField]
+    private Slider _thrusterSlider;
+    [SerializeField]
     private Sprite[] _livesSprites;
     [SerializeField]
     private TextMeshProUGUI _gameOverText;
@@ -41,6 +43,10 @@ public class UIManager : MonoBehaviour
 
     }
 
+    public void UpdateGas(float gas)
+    {
+        _thrusterSlider.value = gas;
+    }
     public void UpdateScore(int score)
     {
         _scoreText.text = "Score: " + score;
