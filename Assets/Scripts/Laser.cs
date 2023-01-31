@@ -61,7 +61,7 @@ public class Laser : MonoBehaviour
         }
 
 
-        if (transform.position.y > 8 || transform.position.y < -5)
+        if (transform.position.y > 8 || transform.position.y < -5 || transform.position.x > 9.2 || transform.position.x < -9.2)
         {
             if (transform.parent != null)
             {
