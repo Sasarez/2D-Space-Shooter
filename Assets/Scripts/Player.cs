@@ -9,7 +9,7 @@ public class Player : MonoBehaviour
     [SerializeField]
     private float _speed = 5f;
 
-    private int _ammoCount = 15;
+    private int _ammoCount = 30;
     private float _speedBoost = 2f;
     private float _thrusterGas = 200f;
     private float _shieldHealth = 3f;
@@ -70,6 +70,7 @@ public class Player : MonoBehaviour
         {
             Debug.LogError("the SpriteRenderer on the Shield is NULL");
         }
+        _uiManager.AmmoInitiate(_ammoCount);
     }
 
     void Update()

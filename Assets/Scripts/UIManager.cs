@@ -3,13 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+
+
 public class UIManager : MonoBehaviour
 {
     [SerializeField]
     private TextMeshProUGUI _scoreText;
     [SerializeField]
     private TextMeshProUGUI _ammoText;
-
+    private int _ammoMax;
     [SerializeField]
     private Image _livesImage;
     [SerializeField]
@@ -29,7 +31,7 @@ public class UIManager : MonoBehaviour
     void Start()
     {
         _scoreText.text = "Score: 0";
-        _ammoText.text = "" + 15;
+        
         _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         if (_gameManager == null)
         {
@@ -43,6 +45,11 @@ public class UIManager : MonoBehaviour
 
     }
 
+    public void AmmoInitiate(int ammo)
+    {
+        _ammoMax = ammo;
+        UpdateAmmo(ammo);
+    }
     public void UpdateGas(float gas)
     {
         _thrusterSlider.value = gas;
@@ -54,10 +61,12 @@ public class UIManager : MonoBehaviour
 
     public void UpdateAmmo(int ammo)
     {
-        _ammoText.text = "" + ammo;
-        if (ammo < 8) _ammoText.color = Color.yellow;
-        if (ammo < 4) _ammoText.color = Color.red;
-        if (ammo > 8) _ammoText.color = Color.white;
+
+        _ammoText.text = "" + ammo + "/" + _ammoMax;
+        
+        if (ammo < (_ammoMax / 2) +1 ) _ammoText.color = Color.yellow;
+        if (ammo < _ammoMax/4) _ammoText.color = Color.red;
+        if (ammo > (_ammoMax/2) + 1) _ammoText.color = Color.white;
     }
 
 
