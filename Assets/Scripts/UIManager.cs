@@ -50,6 +50,7 @@ public class UIManager : MonoBehaviour
         _ammoMax = ammo;
         UpdateAmmo(ammo);
     }
+    public int GetAmmoMax() { return _ammoMax; }
     public void UpdateGas(float gas)
     {
         _thrusterSlider.value = gas;

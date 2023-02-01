@@ -222,7 +222,7 @@ public class Player : MonoBehaviour
     }
     public void AmmoActive()
     {
-        _ammoCount = 15;
+        _ammoCount = _uiManager.GetAmmoMax();
         _uiManager.UpdateAmmo(_ammoCount);
     }
     public void SpecialActive()
