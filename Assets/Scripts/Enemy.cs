@@ -10,6 +10,7 @@ public class Enemy : MonoBehaviour
 
     AudioSource _audioSource;
     float _speed = 3.5f;
+    private SpawnManager _spawnManager;
     private Player _player;
     [SerializeField]
     private GameObject _laserPrefab;
@@ -22,6 +23,11 @@ public class Enemy : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        _spawnManager= GameObject.Find("SpawnManager").GetComponent<SpawnManager>();
+        if ( _spawnManager == null ) 
+        {
+            Debug.Log("the Spawn Manager is NULL");
+        }
         _player = GameObject.Find("Player").GetComponent<Player>();
         if (_player == null) Debug.Log("The Player is NULL");
         _enemyAnim = GetComponent<Animator>();
@@ -72,6 +78,7 @@ public class Enemy : MonoBehaviour
             _speed = 0;
             StopCoroutine("EnemyFire");
             this.GetComponent<BoxCollider2D>().enabled = false;
+            _spawnManager.EnemySlain();
             Destroy(gameObject, 2.5f);
         }
         if (other.tag == "Projectile" && other.GetComponent<Laser>().WhoOwns() == 0)
@@ -93,8 +100,10 @@ public class Enemy : MonoBehaviour
             StopCoroutine("EnemyFire");
             _speed = 0;
             _audioSource.Play();
+            
             this.tag = "Undefined";
             this.GetComponent<BoxCollider2D>().enabled = false;
+            _spawnManager.EnemySlain();
             Destroy(gameObject, 2.5f);
         }
 

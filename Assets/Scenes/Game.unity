@@ -1511,6 +1511,12 @@ MonoBehaviour:
   _enemyType: 0
   _spawnLocation: {x: 0, y: 0, z: 0}
   _spawnRotation: {x: 0, y: 0, z: 0}
+  _wave: 0
+  _enemiesSlain: 0
+  _waveActive: 0
+  _enemiesToSpawn: 0
+  _enemiesSpawned: 0
+  _enemyTypesToSpawn: 000000000000000000000000
 --- !u!4 &1685935888
 Transform:
   m_ObjectHideFlags: 0
