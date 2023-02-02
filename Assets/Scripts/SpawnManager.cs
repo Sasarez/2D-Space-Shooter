@@ -104,8 +104,11 @@ public class SpawnManager : MonoBehaviour
 
     void SpawnEnemy()
     {
-
-
+        if (playerDied)
+        {
+            _enemiesToSpawn = 0;
+            return;
+        }
         if (_enemiesSpawned < _enemiesToSpawn)
         {
             GameObject newEnemy = Instantiate(_enemyPrefab, _spawnLocation, Quaternion.identity);
@@ -165,7 +168,7 @@ public class SpawnManager : MonoBehaviour
     }
     public void PlayerDied()
     {
-        StopCoroutine("SpawnEnemy");
+        
         playerDied = true;
     }
 }
