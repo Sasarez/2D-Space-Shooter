@@ -26,6 +26,7 @@ public class Player : MonoBehaviour
     private bool _isSpecialActive = false;
     private bool _isSpeedActive = false;
     private bool _isShieldActive = false;
+    private bool _isSlowActive = false;
     private int _lives = 3;
     [SerializeField]
     private SpawnManager _spawnManager;
@@ -120,9 +121,13 @@ public class Player : MonoBehaviour
         _verticalInput = Input.GetAxis("Vertical");
         _horizontalInput = Input.GetAxis("Horizontal");
         //Thruster effect, press shift to boost your speed
+       
         _masterSpeed = _speed;
         _speedBoost = 1;
-
+        if (_isSlowActive)
+        {
+            _masterSpeed = _speed / 2;
+        }
         if (_isSpeedActive)
         {
             _masterSpeed = _speed * 1.5f;
@@ -230,6 +235,15 @@ public class Player : MonoBehaviour
         _isSpecialActive = true;
         AmmoActive();
         StartCoroutine(SpecialPowerDown());
+    }
+    public void SlowActive()
+    {
+        _isSlowActive = true;
+        Invoke("SlowPowerDown", 5f);
+    }
+    void SlowPowerDown()
+    {
+        _isSlowActive = false;
     }
     private void UpdateDamage()
     {

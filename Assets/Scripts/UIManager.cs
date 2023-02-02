@@ -11,6 +11,7 @@ public class UIManager : MonoBehaviour
     private TextMeshProUGUI _scoreText;
     [SerializeField]
     private TextMeshProUGUI _ammoText;
+    [SerializeField]private TextMeshProUGUI _waveText;
     private int _ammoMax;
     [SerializeField]
     private Image _livesImage;
@@ -39,6 +40,10 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    public void WaveDisplay(int wave, int enemiestospawn, int enemieskilled)
+    {
+        _waveText.text = "Wave " + wave + "     " + (enemiestospawn - enemieskilled) + "/" + enemiestospawn +" Enemies Left";
+    }
     // Update is called once per frame
     void Update()
     {

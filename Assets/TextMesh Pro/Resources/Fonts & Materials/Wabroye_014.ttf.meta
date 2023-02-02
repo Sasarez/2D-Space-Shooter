@@ -1,0 +1,22 @@
+fileFormatVersion: 2
+guid: 0a243416d5366d540a7d0946275b3046
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontNames:
+  - Wabroye
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 331fd979c711e704b868db3e66109405, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  shouldRoundAdvanceValue: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

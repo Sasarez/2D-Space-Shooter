@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using TMPro.EditorUtilities;
 using UnityEditorInternal;
 using UnityEngine;
 
@@ -8,23 +9,27 @@ public class SpawnManager : MonoBehaviour
 {
     [SerializeField] private GameObject _enemyPrefab;
     [SerializeField] private GameObject _enemyContainer;
+    private UIManager _uiManager;
     [SerializeField] private GameObject[] _powerups;
     [SerializeField] private int _enemyType;
     [SerializeField] private Vector3 _spawnLocation;
     [SerializeField] private Vector3 _spawnRotation;
     [SerializeField] private int _wave;
-    [SerializeField] private int _enemiesSlain;
-    [SerializeField] private bool _waveActive = false;
-    [SerializeField] private int _enemiesToSpawn;
     [SerializeField] private int _enemiesSpawned;
     [SerializeField] private int[] _enemyTypesToSpawn;
     [SerializeField] private float _minSpawn =2f;
     [SerializeField] private float _maxSpawn=4f;
+    private int _enemiesSlain;
+    private int _enemiesToSpawn = 4;
     private bool playerDied = false;
     // Start is called before the first frame update
     void Start()
     {
-        //StartCoroutine("SpawnEnemy");
+        _uiManager= GameObject.Find("UI_Manager").GetComponent<UIManager>();
+        if(_uiManager == null )
+        {
+            Debug.LogError("UI Manager on the Spawn Manager is NULL");
+        }
         _wave++;
         WaveStart(_wave);
         StartCoroutine("SpawnPowerup");
@@ -35,8 +40,9 @@ public class SpawnManager : MonoBehaviour
         switch (wave)
         {
             case int i when (i > 0 && i <= 4):
-                Debug.Log("Wave Starting NOW!");
                 _enemyTypesToSpawn[0] = 1;
+                
+
                 break;
             case int i when (i > 4 && i < 8):
                 _enemyTypesToSpawn[0] = 1;
@@ -50,20 +56,17 @@ public class SpawnManager : MonoBehaviour
                 _minSpawn = 1.5f;
                  break;
             case 13:
-                Debug.Log("You Won!");
                 _minSpawn = 1f;
                 _maxSpawn = 2.5f;
                 break;
         }
-        
-    
-        _waveActive = true;
-        _enemiesToSpawn = wave * 1;
-        Debug.Log("Spawning " + wave * 1 + " Enemies");
+        _enemiesToSpawn = 4 + wave;
+
         foreach (int i in _enemyTypesToSpawn)
         {
             if (_enemyTypesToSpawn[i] == 1)
             {
+                _uiManager.WaveDisplay(_wave, _enemiesToSpawn, 0);
                 SpawnEnemyPreperation();
                 break;
             }
@@ -96,7 +99,7 @@ public class SpawnManager : MonoBehaviour
             {
                 goto chooseAgain;
             }
-            _waveActive = false;
+            
             Invoke("SpawnEnemy", Random.Range(_minSpawn, _maxSpawn));
         }
         
@@ -120,18 +123,18 @@ public class SpawnManager : MonoBehaviour
         }
 
     }
-    public void CheckDeathCount()
+    void CheckDeathCount()
     {
         if (_enemiesSlain >= _enemiesToSpawn)
         {
-            _waveActive = false;
+            
             _wave++;
             _enemiesSlain = 0;
-            _enemiesToSpawn = 0;
             _enemiesSpawned = 0;
-            Debug.Log("Starting Wave # " + _wave);
-            
             WaveStart(_wave);
+        } else
+        {
+            _uiManager.WaveDisplay(_wave, _enemiesToSpawn, _enemiesSlain);
         }
     }
     public void EnemySlain()
@@ -144,7 +147,7 @@ public class SpawnManager : MonoBehaviour
     {
         while (!playerDied)
         {
-            yield return new WaitForSeconds(Random.Range(7, 12) + 1);
+            yield return new WaitForSeconds(Random.Range(5, 9) + 1);
             int _powerUpSelect = Random.Range(0, _powerups.Length);
             if (_powerUpSelect == 5)
             {

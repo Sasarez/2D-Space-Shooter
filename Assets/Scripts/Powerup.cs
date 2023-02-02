@@ -48,6 +48,9 @@ public class Powerup : MonoBehaviour
                 case 5: //Special Active
                     _player.SpecialActive();
                     break;
+                case 6: //Slow Active
+                    _player.SlowActive();
+                    break;
             }
             AudioSource.PlayClipAtPoint(_clip, new Vector3(0, 1, -10), 1f);
             Destroy(this.gameObject);
