@@ -97,7 +97,7 @@ public class Player : MonoBehaviour
             _canFire = Time.time + _fireRate;
             if (_isSpecialActive)
             {
-                _ammoCount = 15;
+                _ammoCount = _uiManager.GetAmmoMax();
                 _uiManager.UpdateAmmo(_ammoCount);
                 GameObject _hLaser = Instantiate(_laser, transform.position + new Vector3(0, 1.08f, 0), Quaternion.identity);
                 _hLaser.GetComponent<Laser>().Special();
@@ -224,7 +224,7 @@ public class Player : MonoBehaviour
     {
         _ammoCount = _uiManager.GetAmmoMax();
         _uiManager.UpdateAmmo(_ammoCount);
-    }
+    } 
     public void SpecialActive()
     {
         _isSpecialActive = true;

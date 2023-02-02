@@ -18,6 +18,8 @@ public class SpawnManager : MonoBehaviour
     [SerializeField] private int _enemiesToSpawn;
     [SerializeField] private int _enemiesSpawned;
     [SerializeField] private int[] _enemyTypesToSpawn;
+    [SerializeField] private float _minSpawn =2f;
+    [SerializeField] private float _maxSpawn=4f;
     private bool playerDied = false;
     // Start is called before the first frame update
     void Start()
@@ -32,24 +34,28 @@ public class SpawnManager : MonoBehaviour
     {
         switch (wave)
         {
-            case int i when (i > 0 && i < 4):
+            case int i when (i > 0 && i <= 4):
                 Debug.Log("Wave Starting NOW!");
                 _enemyTypesToSpawn[0] = 1;
                 break;
             case int i when (i > 4 && i < 8):
                 _enemyTypesToSpawn[0] = 1;
                 _enemyTypesToSpawn[1] = 1;
+                _maxSpawn = 3.5f;
                 break;
-            case int i when (i > 8 && i < 12):
+            case int i when (i >= 8 && i < 12):
                 _enemyTypesToSpawn[0] = 1;
                 _enemyTypesToSpawn[1] = 1;
                 _enemyTypesToSpawn[2] = 1;
+                _minSpawn = 1.5f;
                  break;
             case 13:
                 Debug.Log("You Won!");
+                _minSpawn = 1f;
+                _maxSpawn = 2.5f;
                 break;
         }
-       
+        
     
         _waveActive = true;
         _enemiesToSpawn = wave * 1;
@@ -57,55 +63,57 @@ public class SpawnManager : MonoBehaviour
         foreach (int i in _enemyTypesToSpawn)
         {
             if (_enemyTypesToSpawn[i] == 1)
-            {  
-                StartCoroutine("SpawnEnemy");
+            {
+                SpawnEnemyPreperation();
+                break;
             }
         }
         
     }
-    IEnumerator SpawnEnemy()
+    void SpawnEnemyPreperation()
     {
-        while (!playerDied && _waveActive)
+    chooseAgain:
+        if (_enemiesSpawned < _enemiesToSpawn)
         {
-           
-            yield return new WaitForSeconds(Random.Range(2f,5f));
-            chooseAgain:
             _enemyType = Random.Range(0, 3);
 
-            if (_enemyType == 0 && _enemyTypesToSpawn[_enemyType]==1)
+            if (_enemyType == 0 && _enemyTypesToSpawn[_enemyType] == 1)
             {
                 _spawnLocation = new Vector3(Random.Range(-8.5f, 8.5f), 8, 0);
                 _spawnRotation = new Vector3(0, 0, 0);
-            } else if (_enemyType == 1 && _enemyTypesToSpawn[_enemyType] == 1)
+            }
+            else if (_enemyType == 1 && _enemyTypesToSpawn[_enemyType] == 1)
             {
                 _spawnLocation = new Vector3(-9.2f, Random.Range(-3.4f, 6.2f));
                 _spawnRotation = new Vector3(0, 0, 90);
             }
-            else if (_enemyType == 2 && _enemyTypesToSpawn[_enemyType] == 1 )
+            else if (_enemyType == 2 && _enemyTypesToSpawn[_enemyType] == 1)
             {
                 _spawnLocation = new Vector3(9.2f, Random.Range(-3.4f, 6.2f));
                 _spawnRotation = new Vector3(0, 0, -90);
             }
             else
             {
-                Debug.Log("Choosing again");
                 goto chooseAgain;
             }
-            if (_enemiesSpawned < _enemiesToSpawn)
-            {
-                GameObject newEnemy = Instantiate(_enemyPrefab, _spawnLocation, Quaternion.identity);
-                newEnemy.transform.parent = _enemyContainer.transform;
-                newEnemy.transform.eulerAngles = _spawnRotation;
-                newEnemy.transform.GetComponent<Enemy>().SetEnemyType(_enemyType);
-                _enemiesSpawned++;
-            }
-            else
-            {
-                StopCoroutine("SpawnEnemy");
-            }
-            
-                
-            
+            _waveActive = false;
+            Invoke("SpawnEnemy", Random.Range(_minSpawn, _maxSpawn));
+        }
+        
+    }
+
+    void SpawnEnemy()
+    {
+
+
+        if (_enemiesSpawned < _enemiesToSpawn)
+        {
+            GameObject newEnemy = Instantiate(_enemyPrefab, _spawnLocation, Quaternion.identity);
+            newEnemy.transform.parent = _enemyContainer.transform;
+            newEnemy.transform.eulerAngles = _spawnRotation;
+            newEnemy.transform.GetComponent<Enemy>().SetEnemyType(_enemyType);
+            _enemiesSpawned++;
+            SpawnEnemyPreperation();
         }
 
     }

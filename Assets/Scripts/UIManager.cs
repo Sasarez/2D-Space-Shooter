@@ -44,7 +44,7 @@ public class UIManager : MonoBehaviour
     {
 
     }
-
+     
     public void AmmoInitiate(int ammo)
     {
         _ammoMax = ammo;

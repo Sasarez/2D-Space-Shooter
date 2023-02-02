@@ -83,7 +83,7 @@ public class Enemy : MonoBehaviour
         }
         if (other.tag == "Projectile" && other.GetComponent<Laser>().WhoOwns() == 0)
         {
-
+             
 
             if (_player != null)
             {
