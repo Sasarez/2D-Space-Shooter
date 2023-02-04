@@ -310,6 +310,7 @@ public class Player : MonoBehaviour
     {
         if (collision.tag == "Projectile" && collision.GetComponent<Laser>().WhoOwns() == 1)
         {
+            Destroy(collision.gameObject);
             Damage();
         }
     }

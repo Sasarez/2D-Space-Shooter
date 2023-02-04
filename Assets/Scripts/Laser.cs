@@ -2,16 +2,20 @@ using System.Buffers;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 public class Laser : MonoBehaviour
 {
     [SerializeField] private float _speed = 3.5f;
     [SerializeField] private int _owner; //if _owner is 0 it's player, if 1 it's enemy
     private bool _isSpecial = false;
+    private bool _altFire = false;
+    private Vector3 _direction;
+    private Vector3 _playerLocation;
     // Start is called before the first frame update
     void Start()
     {
-
+        
     }
 
     public void Special()
@@ -25,6 +29,14 @@ public class Laser : MonoBehaviour
     public int WhoOwns()
     {
         return _owner;
+    }
+    public void AlternateFire(Vector3 playerLocation)
+    {
+        _altFire = true;
+        _playerLocation = playerLocation;
+        _direction = (_playerLocation - transform.position).normalized;
+       
+
     }
     // Update is called once per frame
     void Update()
@@ -56,7 +68,20 @@ public class Laser : MonoBehaviour
             }
             else if (_owner == 1)
             {
-                transform.Translate(Vector3.down * (_speed * 2) * Time.deltaTime);
+                if (!_altFire)
+                {
+                    transform.Translate(Vector3.down * (_speed * 2) * Time.deltaTime);
+                }
+                else
+                {
+                    transform.up = _playerLocation - transform.position;
+                    
+                    transform.position += _direction * _speed * Time.deltaTime;
+                 
+                }
+
+                
+                
             }
         }
 

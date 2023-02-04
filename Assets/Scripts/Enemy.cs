@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions.Must;
+using static UnityEngine.GraphicsBuffer;
 
 public class Enemy : MonoBehaviour
 {
@@ -18,8 +19,9 @@ public class Enemy : MonoBehaviour
     private AudioClip _audioLaser;
     private Vector2 _spawnPosition;
     private Vector3 _laserRotation;
+    private bool _movingLeft;
     [SerializeField]
-    private int _enemyEntrance; //0 top to bottom, 1 left to right, 2 right to left
+    private int _enemyType; //0 top to bottom, 1 left to right, 2 right to left
     // Start is called before the first frame update
     void Start()
     {
@@ -34,16 +36,49 @@ public class Enemy : MonoBehaviour
         if (_enemyAnim == null) Debug.Log("The Animator is NULL");
         _audioSource = GetComponent<AudioSource>();
         if (_audioSource == null) Debug.LogError("AudioSource on the Enemy is NULL");
-        StartCoroutine("EnemyFire");
+      
+            StartCoroutine("EnemyFire");
+        
+        
     }
 
     public void SetEnemyType(int type)
     {
-        _enemyEntrance = type;
+        _enemyType = type;
+    }
+
+
+
+    Vector3 GetPlayerLocation()
+    {
+        if (_player == null)
+        {
+            return Vector3.zero;
+        }
+        return _player.transform.position;
+
     }
     // Update is called once per frame
     void Update()
     {
+        if (_enemyType==3)
+        {
+            if (transform.position.x <= -9)
+            {
+                _movingLeft = false;
+            } else if (transform.position.x >= 9)
+            {
+                _movingLeft = true;
+            }
+            if (_movingLeft)
+            {
+                transform.Translate(Vector3.left * _speed * Time.deltaTime);
+            } else if (_movingLeft == false)
+            {
+                transform.Translate(Vector3.right * _speed * Time.deltaTime);
+            }
+            return;
+        }
         transform.Translate(Vector2.down * _speed * Time.deltaTime);
         if (transform.position.y < -5.41)
         {
@@ -113,7 +148,7 @@ public class Enemy : MonoBehaviour
         while (true)
         {
             yield return new WaitForSeconds(Random.Range(2, 4));
-            switch (_enemyEntrance)
+            switch (_enemyType)
             {
                 case 0:
                     _spawnPosition = new Vector2(transform.position.x, transform.position.y -1.5f);
@@ -127,11 +162,20 @@ public class Enemy : MonoBehaviour
                     _spawnPosition = new Vector2(transform.position.x - 1.5f, transform.position.y);
                     _laserRotation = new Vector3(0, 0, -90);
                     break;
+                default:
+                    _spawnPosition = new Vector2(transform.position.x, transform.position.y - 1.5f);
+                    _laserRotation = new Vector3(0, 0, 0);
+                    break;
             }
             
             GameObject laser = Instantiate(_laserPrefab, _spawnPosition, Quaternion.identity);
             
             laser.GetComponent<Laser>().EnemyOwned();
+            if (_enemyType == 3 )
+            {
+                laser.GetComponent<Laser>().AlternateFire(GetPlayerLocation());
+            }
+            
             laser.transform.eulerAngles = _laserRotation;
             
             AudioSource.PlayClipAtPoint(_audioLaser, new Vector3(0, 1, -10), .4f);
