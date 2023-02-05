@@ -27,6 +27,7 @@ public class Player : MonoBehaviour
     private bool _isSpeedActive = false;
     private bool _isShieldActive = false;
     private bool _isSlowActive = false;
+    private bool _godMode = true;
     private int _lives = 3;
     [SerializeField]
     private SpawnManager _spawnManager;
@@ -79,6 +80,13 @@ public class Player : MonoBehaviour
         ThrusterCoolDown();
         Movement();
         Fire();
+        if (_godMode)
+        {
+            _score = 0;
+            _uiManager.UpdateScore(_score);
+            _ammoCount = 30;
+            _uiManager.UpdateAmmo(_ammoCount);
+        }
 
     }
     void ThrusterCoolDown()
@@ -188,7 +196,11 @@ public class Player : MonoBehaviour
 
         }
         _screenShake.ShakeScreen(1, .2f, 2f);
-        _lives--;
+        if (!_godMode)
+        {
+            _lives--;
+        }
+        
     }
     public void Damage()
     {

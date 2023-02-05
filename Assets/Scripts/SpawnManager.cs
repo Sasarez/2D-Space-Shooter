@@ -20,6 +20,7 @@ public class SpawnManager : MonoBehaviour
     [SerializeField] private float _minSpawn = 2f;
     [SerializeField] private float _maxSpawn = 4f;
     [SerializeField] private bool _enemiesHaveShields = false;
+    private bool _spawnerTest = true;
     private int _enemiesSlain;
     private int _enemiesToSpawn = 4;
     private bool playerDied = false;
@@ -38,10 +39,18 @@ public class SpawnManager : MonoBehaviour
     }
     void WaveStart(int wave)
     {
+
+        //Enemy Types
+        //0 top to bottom,
+        //1 left to right,
+        //2 right to left,
+        //3 side to side on top, lasers fired directly toward player
+        //4 same as 0 except they will attempt to ram the player,
+        //5 same as 0 except they will fire behind if the player is behind
         switch (wave)
         {
             case int i when (i > 0 && i <= 4):
-                _enemyTypesToSpawn[5] = 1;
+                _enemyTypesToSpawn[0] = 1;
                // _enemiesHaveShields = true;
                 break;
             case int i when (i > 4 && i < 8):
@@ -56,8 +65,19 @@ public class SpawnManager : MonoBehaviour
                 _enemyTypesToSpawn[3] = 1;
                 break;
         }
-        //_enemiesToSpawn = 4 + wave;
-        _enemiesToSpawn = 1;
+        if (_spawnerTest)
+        {
+            _enemiesToSpawn = 500;
+            _minSpawn = .5f;
+            _maxSpawn = 1f;
+
+        }
+        else
+        {
+            _enemiesToSpawn = 4 + wave;
+        }
+       
+        
 
         for (int i = 0; i <= _enemyTypesToSpawn.Length; i++)
         {
@@ -173,7 +193,14 @@ public class SpawnManager : MonoBehaviour
     {
         while (!playerDied)
         {
-            yield return new WaitForSeconds(Random.Range(4, 7) + 1);
+            if (_spawnerTest)
+            {
+                yield return new WaitForSeconds(Random.Range(.5f, 1f) + 1);
+            } else
+            {
+                yield return new WaitForSeconds(Random.Range(4f, 7f) + 1);
+            }
+            
             int _randomPowerup = Random.Range(0, 72);
 
 

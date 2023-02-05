@@ -14,8 +14,13 @@ public class Powerup : MonoBehaviour
     private int _powerUpType;
     [SerializeField]
     private AudioClip _clip;
+    private Laser _laser;
 
     // Update is called once per frame
+    private void Start()
+    {
+        
+    }
     void Update()
     {
         transform.Translate(Vector3.down * _powerUpSpeed * Time.deltaTime);
@@ -57,5 +62,12 @@ public class Powerup : MonoBehaviour
 
 
         }
+        if (other.tag == "Projectile" && tag == "Powerup" && other.GetComponent<Laser>().WhoOwns() == 1)
+        {
+            Debug.Log(this.name + " Was Destroyed");
+            Destroy(other.gameObject);
+            Destroy(this.gameObject);
+            
+        } 
     }
 }

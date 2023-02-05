@@ -14,9 +14,9 @@ GameObject:
   - component: {fileID: 3937620786847262034}
   - component: {fileID: 9181073905371244043}
   - component: {fileID: 3390094756418075393}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Speed_Powerup
-  m_TagString: Untagged
+  m_TagString: Powerup
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

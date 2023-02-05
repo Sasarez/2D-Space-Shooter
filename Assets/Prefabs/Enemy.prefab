@@ -155,6 +155,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f22da7d8511a464e8490e16e11a0e52, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _speed: 3.5
   _laserPrefab: {fileID: 761591880467372920, guid: 1a61095ea4f0dbe4a912951f62201ff6, type: 3}
   _audioLaser: {fileID: 8300000, guid: 75676f361bdfeaf41a46623e95df3dbc, type: 3}
   _enemyShield: {fileID: 3965413191770011278}

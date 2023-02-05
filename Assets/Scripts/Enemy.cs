@@ -11,7 +11,7 @@ public class Enemy : MonoBehaviour
     Animator _enemyAnim;
 
     AudioSource _audioSource;
-    float _speed = 3.5f;
+    [SerializeField]float _speed = 3.5f;
     private SpawnManager _spawnManager;
     private Player _player;
     [SerializeField]
@@ -28,10 +28,12 @@ public class Enemy : MonoBehaviour
     private Vector3 _transformDown;
     private bool _enemyDying;
     private bool _ramming;
+    private bool _powerupDetected;
     private Vector3 _originalUp;
     private Vector3 lookPos;
     private Quaternion rotation;
     private Vector3 target;
+    private bool _detectionCooldown;
     [SerializeField]
     private int _enemyType; //0 top to bottom, 1 left to right, 2 right to left
     // Start is called before the first frame update
@@ -144,6 +146,8 @@ public class Enemy : MonoBehaviour
         {
             transform.position = new Vector2(-9.2f, Random.Range(-3.4f, 6.2f));
         }
+       // if (_enemyType == 0 || _enemyType == 4 || _enemyType == 5) 
+        
     }
     // Update is called once per frame
     void Update()
@@ -158,13 +162,35 @@ public class Enemy : MonoBehaviour
         if (!_ramming)
         
         {
+            
             EnemyMovement();
+            ObjectRaycastCheck();
+
         }
-       
-        
-        
 
     }
+    void ObjectRaycastCheck()
+    {
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, -transform.up, 5f, LayerMask.GetMask("Powerup"));
+       Debug.DrawRay(transform.position, -transform.up * 5f, Color.blue) ;
+        if (hit.collider != null)
+        {
+            if (hit.collider.tag == "Powerup" && !_detectionCooldown)
+            {
+                _powerupDetected = true;
+              
+               // Debug.Log(hit.collider.name + " Detected");
+                   // hit.collider.transform.GetComponent<SpriteRenderer>().color = Color.red;
+                
+                SetUpLaser();
+            }
+        }
+    }
+
+
+
+
+
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (_hasShield && other.tag == "Projectile" && other.GetComponent<Laser>().WhoOwns()==0)
@@ -229,50 +255,85 @@ public class Enemy : MonoBehaviour
         }
 
     }
+
+    void PowerUpDetectionCooldown()
+    {
+        _detectionCooldown = false;
+    }
+    void SetUpLaser()
+    {
+        switch (_enemyType)
+        {
+            case 0:
+                _spawnPosition = new Vector2(transform.position.x, transform.position.y - 1.5f);
+                _laserRotation = new Vector3(0, 0, 0);
+                break;
+            case 1:
+                _spawnPosition = new Vector2(transform.position.x + 1.5f, transform.position.y);
+                _laserRotation = new Vector3(0, 0, 90);
+                break;
+            case 2:
+                _spawnPosition = new Vector2(transform.position.x - 1.5f, transform.position.y);
+                _laserRotation = new Vector3(0, 0, -90);
+                break;
+            default:
+                _spawnPosition = new Vector2(transform.position.x, transform.position.y - 1.5f);
+                _laserRotation = new Vector3(0, 0, 0);
+                break;
+        }
+        if (!_ramming)
+        {
+            if (_enemyType == 5 && GetPlayerLocation().y > transform.position.y && !_powerupDetected)
+            {
+                _spawnPosition = new Vector2(transform.position.x, transform.position.y + 1.5f);
+                _laserRotation = new Vector3(0, 0, 180);
+            }
+            if (_powerupDetected)
+            {
+                GameObject qLaser = Instantiate(_laserPrefab, _spawnPosition, Quaternion.identity);
+                qLaser.GetComponent<Laser>().EnemyOwned();
+                qLaser.GetComponent<SpriteRenderer>().color = Color.green;
+                qLaser.transform.eulerAngles = _laserRotation;
+                _powerupDetected = false;
+                _detectionCooldown = true;
+               // Debug.Break();
+                Invoke("PowerUpDetectionCooldown", 1.5f);
+            }
+        }
+    }
+
+    void FireLaser()
+    {
+        if (!_powerupDetected)
+        {
+            GameObject laser = Instantiate(_laserPrefab, _spawnPosition, Quaternion.identity);
+
+
+            laser.GetComponent<Laser>().EnemyOwned();
+            if (_enemyType == 3)
+            {
+                laser.GetComponent<Laser>().AlternateFire(GetPlayerLocation());
+            }
+
+
+            laser.transform.eulerAngles = _laserRotation;
+
+            AudioSource.PlayClipAtPoint(_audioLaser, new Vector3(0, 1, -10), .4f);
+        }
+        
+    }
+    
     private IEnumerator EnemyFire()
     {
         while (true)
         {
+            
             yield return new WaitForSeconds(Random.Range(2, 4));
-            switch (_enemyType)
-            {
-                case 0:
-                    _spawnPosition = new Vector2(transform.position.x, transform.position.y -1.5f);
-                    _laserRotation = new Vector3(0, 0, 0);
-                    break;
-                case 1:
-                    _spawnPosition = new Vector2(transform.position.x + 1.5f, transform.position.y);
-                    _laserRotation = new Vector3(0, 0, 90);
-                    break;
-                case 2:
-                    _spawnPosition = new Vector2(transform.position.x - 1.5f, transform.position.y);
-                    _laserRotation = new Vector3(0, 0, -90);
-                    break;
-                default:
-                    _spawnPosition = new Vector2(transform.position.x, transform.position.y - 1.5f);
-                    _laserRotation = new Vector3(0, 0, 0);
-                    break;
-            }
-            if (!_ramming)
-            {
-                if (_enemyType == 5 && GetPlayerLocation().y>transform.position.y)
-                {
-                    _spawnPosition = new Vector2(transform.position.x, transform.position.y + 1.5f);
-                    _laserRotation = new Vector3(0, 0, 180);
-                }
-                GameObject laser = Instantiate(_laserPrefab, _spawnPosition, Quaternion.identity);
-                
-
-                laser.GetComponent<Laser>().EnemyOwned();
-                if (_enemyType == 3)
-                {
-                    laser.GetComponent<Laser>().AlternateFire(GetPlayerLocation());
-                }
-
-                laser.transform.eulerAngles = _laserRotation;
-
-                AudioSource.PlayClipAtPoint(_audioLaser, new Vector3(0, 1, -10), .4f);
-            }
+            SetUpLaser();
+            FireLaser();
+            
+               
+            
            
         }
     }

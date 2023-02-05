@@ -433,7 +433,7 @@ GameObject:
   - component: {fileID: 4368748373545015708}
   - component: {fileID: 4368748373545015711}
   - component: {fileID: 1063827867}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -524,8 +524,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _speed: 8.5
-  _color: {r: 1, g: 0, b: 0, a: 0}
-  _thruster: {fileID: 300145874}
   _fireRate: 0.45
   _isTripleShotActive: 0
   _isSpecialActive: 0
