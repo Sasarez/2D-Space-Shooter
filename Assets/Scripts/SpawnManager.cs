@@ -19,6 +19,7 @@ public class SpawnManager : MonoBehaviour
     [SerializeField] private int[] _enemyTypesToSpawn;
     [SerializeField] private float _minSpawn = 2f;
     [SerializeField] private float _maxSpawn = 4f;
+    [SerializeField] private bool _enemiesHaveShields = false;
     private int _enemiesSlain;
     private int _enemiesToSpawn = 4;
     private bool playerDied = false;
@@ -40,7 +41,8 @@ public class SpawnManager : MonoBehaviour
         switch (wave)
         {
             case int i when (i > 0 && i <= 4):
-                _enemyTypesToSpawn[0] = 1;
+                _enemyTypesToSpawn[5] = 1;
+               // _enemiesHaveShields = true;
                 break;
             case int i when (i > 4 && i < 8):
                 _enemyTypesToSpawn[1] = 1;
@@ -54,7 +56,8 @@ public class SpawnManager : MonoBehaviour
                 _enemyTypesToSpawn[3] = 1;
                 break;
         }
-        _enemiesToSpawn = 4 + wave;
+        //_enemiesToSpawn = 4 + wave;
+        _enemiesToSpawn = 1;
 
         for (int i = 0; i <= _enemyTypesToSpawn.Length; i++)
         {
@@ -71,7 +74,7 @@ public class SpawnManager : MonoBehaviour
     }
     void SpawnEnemyPreperation()
     {
-        Debug.Log(_enemyTypesToSpawn.Length);
+        
     chooseAgain:
         if (_enemiesSpawned < _enemiesToSpawn)
         {
@@ -99,6 +102,16 @@ public class SpawnManager : MonoBehaviour
                 _spawnRotation = new Vector3(0, 0, 0);
 
             }
+            else if (_enemyType==4 && _enemyTypesToSpawn[_enemyType] == 1)
+            {
+                _spawnLocation = new Vector3(Random.Range(-8.5f, 8.5f), 8, 0);
+                _spawnRotation = new Vector3(0, 0, 0);
+            }
+            else if (_enemyType == 5 && _enemyTypesToSpawn[_enemyType] == 1)
+            {
+                _spawnLocation = new Vector3(Random.Range(-8.5f, 8.5f), 8, 0);
+                _spawnRotation = new Vector3(0, 0, 0);
+            }
             else
             {
                 goto chooseAgain;
@@ -122,6 +135,14 @@ public class SpawnManager : MonoBehaviour
             newEnemy.transform.parent = _enemyContainer.transform;
             newEnemy.transform.eulerAngles = _spawnRotation;
             newEnemy.transform.GetComponent<Enemy>().SetEnemyType(_enemyType);
+            if (_enemiesHaveShields == true)
+            {
+                int i = Random.Range(0, 50);
+                if (i > 0 && i < 20)
+                {
+                    newEnemy.transform.GetComponent<Enemy>().SetEnemyShield(true);
+                }
+            }
             _enemiesSpawned++;
             SpawnEnemyPreperation();
         }
