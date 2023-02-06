@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -20,6 +21,7 @@ public class Player : MonoBehaviour
     [SerializeField]
     private float _fireRate = .45f;
     float _canFire = -1f;
+    Vector3 _direction;
     [SerializeField]
     private bool _isTripleShotActive = false;
     [SerializeField]
@@ -46,6 +48,9 @@ public class Player : MonoBehaviour
     private GameObject _rightEngine;
     [SerializeField]
     private GameObject _leftEngine;
+    private GameObject[] _powerUpObjects;
+    private GameObject[] _powerDownObjects;
+    private GameObject[] _allPowerObjects;
     private AudioSource _audioSource;
     [SerializeField]
     private AudioClip _audioFire;
@@ -77,6 +82,8 @@ public class Player : MonoBehaviour
 
     void Update()
     {
+        
+        PowerUpVacuum();
         ThrusterCoolDown();
         Movement();
         Fire();
@@ -88,6 +95,23 @@ public class Player : MonoBehaviour
             _uiManager.UpdateAmmo(_ammoCount);
         }
 
+    }
+
+    void PowerUpVacuum()
+    {
+        if (Input.GetKey(KeyCode.C))
+        {
+            _powerUpObjects = GameObject.FindGameObjectsWithTag("Powerup");
+            _powerDownObjects = GameObject.FindGameObjectsWithTag("PowerupNegative");
+            _allPowerObjects = _powerUpObjects.Concat(_powerDownObjects).ToArray();
+            if (_allPowerObjects != null)
+                foreach (var obj in _allPowerObjects)
+                {
+                    Debug.Log(obj.name);
+                    _direction = (transform.position - obj.transform.position).normalized;
+                    obj.transform.position += _direction * 6.5f * Time.deltaTime;
+                }
+        }
     }
     void ThrusterCoolDown()
     {

@@ -1651,7 +1651,7 @@ MonoBehaviour:
   _spawnRotation: {x: 0, y: 0, z: 0}
   _wave: 0
   _enemiesSpawned: 0
-  _enemyTypesToSpawn: 000000000000000000000000000000000000000000000000
+  _enemyTypesToSpawn: 00000000000000000000000000000000000000000000000000000000
   _minSpawn: 2
   _maxSpawn: 4
   _enemiesHaveShields: 0

@@ -20,7 +20,7 @@ public class SpawnManager : MonoBehaviour
     [SerializeField] private float _minSpawn = 2f;
     [SerializeField] private float _maxSpawn = 4f;
     [SerializeField] private bool _enemiesHaveShields = false;
-    private bool _spawnerTest = true;
+    private bool _spawnerTest = false;
     private int _enemiesSlain;
     private int _enemiesToSpawn = 4;
     private bool playerDied = false;
@@ -50,7 +50,7 @@ public class SpawnManager : MonoBehaviour
         switch (wave)
         {
             case int i when (i > 0 && i <= 4):
-                _enemyTypesToSpawn[0] = 1;
+                _enemyTypesToSpawn[6] = 1;
                // _enemiesHaveShields = true;
                 break;
             case int i when (i > 4 && i < 8):
@@ -132,6 +132,11 @@ public class SpawnManager : MonoBehaviour
                 _spawnLocation = new Vector3(Random.Range(-8.5f, 8.5f), 8, 0);
                 _spawnRotation = new Vector3(0, 0, 0);
             }
+            else if (_enemyType == 6 && _enemyTypesToSpawn[_enemyType] == 1)
+            {
+                _spawnLocation = new Vector3(Random.Range(-8.5f, 8.5f), 8, 0);
+                _spawnRotation = new Vector3(0, 0, 0);
+            }
             else
             {
                 goto chooseAgain;
@@ -155,6 +160,7 @@ public class SpawnManager : MonoBehaviour
             newEnemy.transform.parent = _enemyContainer.transform;
             newEnemy.transform.eulerAngles = _spawnRotation;
             newEnemy.transform.GetComponent<Enemy>().SetEnemyType(_enemyType);
+            
             if (_enemiesHaveShields == true)
             {
                 int i = Random.Range(0, 50);

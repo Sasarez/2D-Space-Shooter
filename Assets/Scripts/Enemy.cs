@@ -24,15 +24,14 @@ public class Enemy : MonoBehaviour
     [SerializeField] private GameObject _enemyShield;
     private bool _movingLeft;
     private bool _hasShield;
+    [SerializeField] private bool _isInvincible = false;
     private Vector3 _direction;
-    private Vector3 _transformDown;
+    
     private bool _enemyDying;
     private bool _ramming;
     private bool _powerupDetected;
     private Vector3 _originalUp;
-    private Vector3 lookPos;
-    private Quaternion rotation;
-    private Vector3 target;
+   
     private bool _detectionCooldown;
     [SerializeField]
     private int _enemyType; //0 top to bottom, 1 left to right, 2 right to left
@@ -55,10 +54,22 @@ public class Enemy : MonoBehaviour
         
         
     }
+    public bool IsEnemyDying()
+    {
+        return _enemyDying;
+    }
+    public void SetInvincible(bool invincible)
+    {
+        _isInvincible=invincible;
+    }
 
     public void SetEnemyType(int type)
     {
         _enemyType = type;
+    }
+    public int GetEnemyType()
+    {
+        return _enemyType;
     }
 
     public void SetEnemyShield(bool shield)
@@ -159,6 +170,7 @@ public class Enemy : MonoBehaviour
             RamPlayer(GetPlayerLocation());
 
         }
+
         if (!_ramming)
         
         {
@@ -169,10 +181,17 @@ public class Enemy : MonoBehaviour
         }
 
     }
+
+
+  
+
+
+
+
     void ObjectRaycastCheck()
     {
         RaycastHit2D hit = Physics2D.Raycast(transform.position, -transform.up, 5f, LayerMask.GetMask("Powerup"));
-       Debug.DrawRay(transform.position, -transform.up * 5f, Color.blue) ;
+      // Debug.DrawRay(transform.position, -transform.up * 5f, Color.blue) ;
         if (hit.collider != null)
         {
             if (hit.collider.tag == "Powerup" && !_detectionCooldown)
@@ -219,13 +238,17 @@ public class Enemy : MonoBehaviour
             {
                 Debug.LogError("PLAYER IS NULL!");
             }
-            _enemyDying = true;
-            _enemyAnim.SetTrigger("OnEnemyDeath");
-            _speed = 0;
-            StopCoroutine("EnemyFire");
-            this.GetComponent<BoxCollider2D>().enabled = false;
-            _spawnManager.EnemySlain();
-            Destroy(gameObject, 2.5f);
+            if (!_isInvincible)
+            {
+                _enemyDying = true;
+                _enemyAnim.SetTrigger("OnEnemyDeath");
+                _speed = 0;
+                StopCoroutine("EnemyFire");
+                this.GetComponent<BoxCollider2D>().enabled = false;
+                _spawnManager.EnemySlain();
+                Destroy(gameObject, 2.5f);
+            }
+            
         }
         if (other.tag == "Projectile" && other.GetComponent<Laser>().WhoOwns() == 0)
         {
@@ -240,18 +263,22 @@ public class Enemy : MonoBehaviour
             {
                 Debug.Log("_player is NULL");
             }
-            _enemyDying = true;
-            Destroy(other.gameObject);
-            _enemyAnim.SetTrigger("OnEnemyDeath");
+            if (!_isInvincible)
+            {
+                _enemyDying = true;
+                Destroy(other.gameObject);
+                _enemyAnim.SetTrigger("OnEnemyDeath");
 
-            StopCoroutine("EnemyFire");
-            _speed = 0;
-            _audioSource.Play();
-            
-            this.tag = "Undefined";
-            this.GetComponent<BoxCollider2D>().enabled = false;
-            _spawnManager.EnemySlain();
-            Destroy(gameObject, 2.5f);
+                StopCoroutine("EnemyFire");
+                _speed = 0;
+                _audioSource.Play();
+
+                this.tag = "Undefined";
+                this.GetComponent<BoxCollider2D>().enabled = false;
+                _spawnManager.EnemySlain();
+                Destroy(gameObject, 2.5f);
+            }
+           
         }
 
     }

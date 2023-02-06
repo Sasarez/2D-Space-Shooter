@@ -12,10 +12,15 @@ public class Laser : MonoBehaviour
     private bool _altFire = false;
     private Vector3 _direction;
     private Vector3 _playerLocation;
+    private GameObject[] _targets;
+    private GameObject _target;
+    private float _targetDistance;
+    private float _checkDistance;
+    private Transform _player;
     // Start is called before the first frame update
     void Start()
     {
-        
+        _player = GameObject.Find("Player").transform;
     }
 
     public void Special()
@@ -44,16 +49,30 @@ public class Laser : MonoBehaviour
         if (_isSpecial)
         {
 
-            GameObject target = GameObject.FindWithTag("Enemy");
+            _targets = GameObject.FindGameObjectsWithTag("Enemy");
+            _targetDistance = 9000f;
+            
+            
+                foreach (var target in _targets)
+                {
+                    if (Vector2.Distance(_player.position, target.transform.position) < _targetDistance)
+                    {
+                        _targetDistance = Vector2.Distance(_player.position, target.transform.position);
+                        _target = target;
+                    }
+                }
+            
+        
             this.transform.GetComponent<SpriteRenderer>().color = Color.cyan;
-            if (!target)
+
+            if (!_target)
             {
                 transform.Translate(Vector3.up * _speed * Time.deltaTime);
             }
             else
             {
 
-                transform.up = target.transform.position - transform.position;
+                transform.up = _target.transform.position - transform.position;
                 this.transform.Translate(Vector3.up * (6f) * Time.deltaTime);
             }
 
