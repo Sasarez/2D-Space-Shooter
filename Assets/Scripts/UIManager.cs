@@ -42,7 +42,14 @@ public class UIManager : MonoBehaviour
 
     public void WaveDisplay(int wave, int enemiestospawn, int enemieskilled)
     {
-        _waveText.text = "Wave " + wave + "     " + (enemiestospawn - enemieskilled) + "/" + enemiestospawn +" Enemies Left";
+        if (wave != 10)
+        {
+            _waveText.text = "Wave " + wave + "     " + (enemiestospawn - enemieskilled) + "/" + enemiestospawn + " Enemies Left";
+        } else
+        {
+            _waveText.text = "BOSS WAVE";
+        }
+       
     }
     // Update is called once per frame
     void Update()

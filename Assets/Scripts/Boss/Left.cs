@@ -26,8 +26,9 @@ public class Left : MonoBehaviour
                 {
                     _boss.UpdateBossState(3);
                 }
+                Destroy(other.gameObject);
             }
-            Destroy(other.gameObject);
+            
         }
     }
 }
