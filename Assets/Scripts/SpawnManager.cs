@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using System.Security.Cryptography;
 using TMPro;
 using TMPro.EditorUtilities;
 using UnityEditorInternal;
@@ -24,6 +26,8 @@ public class SpawnManager : MonoBehaviour
     private bool _spawnerTest = false;
     private int _enemiesSlain;
     private int _enemiesToSpawn = 4;
+    private int _enemiesAlive;
+    bool _bossSpawned = false;
     private bool playerDied = false;
     private bool _bossWave = false;
     // Start is called before the first frame update
@@ -54,7 +58,7 @@ public class SpawnManager : MonoBehaviour
         switch (wave)
         {
             case int i when (i > 0 && i <= 2):
-                _enemyTypesToSpawn[0] = 1;
+                _enemyTypesToSpawn[3] = 1;
 
                // _enemiesHaveShields = true;
                 break;
@@ -78,6 +82,7 @@ public class SpawnManager : MonoBehaviour
                     
                 }
                 _enemyTypesToSpawn[7] = 1;
+                _bossWave = true;
                 break;
             /*case int i when (i >= 8 && i < 12):
                 _enemyTypesToSpawn[2] = 1;
@@ -100,9 +105,8 @@ public class SpawnManager : MonoBehaviour
         }
        if (_wave == 10)
         {
-            _enemiesToSpawn = 1;
+            _enemiesToSpawn = 0;
         }
-        
 
         for (int i = 0; i <= _enemyTypesToSpawn.Length; i++)
         {
@@ -111,7 +115,10 @@ public class SpawnManager : MonoBehaviour
             {
 
                 _uiManager.WaveDisplay(_wave, _enemiesToSpawn, 0);
-                SpawnEnemyPreperation();
+               
+                    SpawnEnemyPreperation();
+                
+                
                 break;
             }
         }
@@ -119,63 +126,75 @@ public class SpawnManager : MonoBehaviour
        
 
     }
-    void SpawnEnemyPreperation()
+    void SpawnEnemyPreperation(int enemyType = -1)
     {
         
-    chooseAgain:
-        if (_enemiesSpawned < _enemiesToSpawn)
+    
+        if ((_enemiesSpawned < _enemiesToSpawn) || _bossWave)
         {
-            _enemyType = Random.Range(0, _enemyTypesToSpawn.Length);
+            ChooseAgain:
+            if (enemyType == -1)
+            {
+                enemyType = Random.Range(0, _enemyTypesToSpawn.Length);
+            } else if(_bossSpawned)
+            {
+               
+                _enemyTypesToSpawn[enemyType] = 1;
+            }
+            
 
-            if (_enemyType == 0 && _enemyTypesToSpawn[_enemyType] == 1)
+            if (enemyType == 0 && _enemyTypesToSpawn[enemyType] == 1)
             {
                 _spawnLocation = new Vector3(Random.Range(-8.5f, 8.5f), 8, 0);
                 _spawnRotation = new Vector3(0, 0, 0);
             }
-            else if (_enemyType == 1 && _enemyTypesToSpawn[_enemyType] == 1)
+            else if (enemyType == 1 && _enemyTypesToSpawn[enemyType] == 1)
             {
                 _spawnLocation = new Vector3(-9.2f, Random.Range(-3.4f, 6.2f));
                 _spawnRotation = new Vector3(0, 0, 90);
             }
-            else if (_enemyType == 2 && _enemyTypesToSpawn[_enemyType] == 1)
+            else if (enemyType == 2 && _enemyTypesToSpawn[enemyType] == 1)
             {
                 _spawnLocation = new Vector3(9.2f, Random.Range(-3.4f, 6.2f));
                 _spawnRotation = new Vector3(0, 0, -90);
             }
-            else if (_enemyType == 3 && _enemyTypesToSpawn[_enemyType] == 1)
+            else if (enemyType == 3 && _enemyTypesToSpawn[enemyType] == 1)
             {
 
                 _spawnLocation = new Vector3(Random.Range(-8.5f, 8.5f), 5.64f, 0);
                 _spawnRotation = new Vector3(0, 0, 0);
 
             }
-            else if (_enemyType==4 && _enemyTypesToSpawn[_enemyType] == 1)
+            else if (enemyType ==4 && _enemyTypesToSpawn[enemyType] == 1)
             {
                 _spawnLocation = new Vector3(Random.Range(-8.5f, 8.5f), 8, 0);
                 _spawnRotation = new Vector3(0, 0, 0);
             }
-            else if (_enemyType == 5 && _enemyTypesToSpawn[_enemyType] == 1)
+            else if (enemyType == 5 && _enemyTypesToSpawn[enemyType] == 1)
             {
                 _spawnLocation = new Vector3(Random.Range(-8.5f, 8.5f), 8, 0);
                 _spawnRotation = new Vector3(0, 0, 0);
             }
-            else if (_enemyType == 6 && _enemyTypesToSpawn[_enemyType] == 1)
+            else if (enemyType == 6 && _enemyTypesToSpawn[enemyType] == 1)
             {
                 _spawnLocation = new Vector3(Random.Range(-8.5f, 8.5f), 8, 0);
                 _spawnRotation = new Vector3(0, 0, 0);
             }
-            else if (_enemyType == 7 && _enemyTypesToSpawn[_enemyType] == 1)
+            else if (enemyType == 7 && _enemyTypesToSpawn[enemyType] == 1)
             {
                 _spawnLocation = new Vector3(0, 12, 0);
-                _spawnRotation = new Vector3(0, 0, 0);
-                _bossWave = true;
+                //_spawnRotation = new Vector3(0, 0, 0);
+                
             }
             else
             {
-                goto chooseAgain;
+                enemyType = -1;
+                goto ChooseAgain;
             }
-
+            _enemyType= enemyType;
+            
             Invoke("SpawnEnemy", Random.Range(_minSpawn, _maxSpawn));
+
         }
 
     }
@@ -187,14 +206,16 @@ public class SpawnManager : MonoBehaviour
             _enemiesToSpawn = 0;
             return;
         }
-        if (!_bossWave)
-        {
-            if (_enemiesSpawned < _enemiesToSpawn)
+     
+        
+        
+            if ((_enemiesSpawned < _enemiesToSpawn) || _bossSpawned)
             {
                 GameObject newEnemy = Instantiate(_enemyPrefab, _spawnLocation, Quaternion.identity);
                 newEnemy.transform.parent = _enemyContainer.transform;
                 newEnemy.transform.eulerAngles = _spawnRotation;
                 newEnemy.transform.GetComponent<Enemy>().SetEnemyType(_enemyType);
+
 
                 if (_enemiesHaveShields == true)
                 {
@@ -205,21 +226,36 @@ public class SpawnManager : MonoBehaviour
                     }
                 }
                 _enemiesSpawned++;
-                SpawnEnemyPreperation();
-            }
+                if (_bossWave)
+                {
 
-        } else
+                }
+                else
+                {
+
+                SpawnEnemyPreperation();
+                }
+            
+
+        } if (_bossSpawned==false && _bossWave)
         {
             GameObject Boss = Instantiate(_bossPrefab, _spawnLocation, Quaternion.identity);
             Boss.transform.parent = _enemyContainer.transform;
+            _bossSpawned = true;
+            StartCoroutine("BossSpawn");
             
         }
+        
      
 
     }
     void CheckDeathCount()
     {
-        if (_enemiesSlain >= _enemiesToSpawn)
+        if (_bossWave)
+        {
+
+        }
+        else if (_enemiesSlain >= _enemiesToSpawn)
         {
 
             _wave++;
@@ -227,10 +263,10 @@ public class SpawnManager : MonoBehaviour
             _enemiesSpawned = 0;
             WaveStart(_wave);
         }
-        else
+        else if (_enemiesSlain <= _enemiesToSpawn)
         {
             _uiManager.WaveDisplay(_wave, _enemiesToSpawn, _enemiesSlain);
-        }
+        } 
     }
     public void EnemySlain()
     {
@@ -240,8 +276,29 @@ public class SpawnManager : MonoBehaviour
     public void BossSlain()
     {
         Debug.Log("end the game");
+        StopCoroutine("BossSpawn");
     }
 
+    IEnumerator BossSpawn()
+    {
+        while (true)
+        {
+        yield return new WaitForSeconds(Random.Range(2f, 4f));
+            _enemiesAlive = _enemiesSpawned - _enemiesSlain;
+            Debug.Log("Enemies Alive " + _enemiesAlive);
+            if (_enemiesAlive >= 2)
+            {
+                
+            }
+            else
+            {
+               
+                SpawnEnemyPreperation(3);
+            }
+            
+           
+        }
+    }
     IEnumerator SpawnPowerup()
     {
         while (!playerDied)

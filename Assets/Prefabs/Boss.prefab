@@ -47,7 +47,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.20491394, y: 0.17968777}
+  m_Offset: {x: 0.25210908, y: 0.20003131}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -58,7 +58,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.5901721, y: 0.49614894}
+  m_Size: {x: 0.901743, y: 0.5774264}
   m_EdgeRadius: 0
 --- !u!50 &461534532311980975
 Rigidbody2D:
@@ -122,7 +122,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3782332714652659091}
-  m_LocalRotation: {x: -0.0047068708, y: -0.20335753, z: -0.97908574, w: -0.0038298396}
+  m_LocalRotation: {x: -0.20322429, y: -0.0025397348, z: 0.012235417, w: -0.9790525}
   m_LocalPosition: {x: 0, y: 3.31, z: 0}
   m_LocalScale: {x: 1, y: 0.5, z: 1}
   m_ConstrainProportionsScale: 0
@@ -131,7 +131,7 @@ Transform:
   - {fileID: 2503155031090424307}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: -23.464, y: 0.673, z: -180.588}
+  m_LocalEulerAnglesHint: {x: 23.453, y: 0, z: -361.432}
 --- !u!212 &3782332714652659084
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -223,6 +223,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: e54e75654f488ff4f8a47f6696c8c88b, type: 3}
   - {fileID: 21300000, guid: 5297aba06d744bb48984e537e75db911, type: 3}
   _bossState: 0
+  _laserPrefab: {fileID: 761591880467372920, guid: 1a61095ea4f0dbe4a912951f62201ff6, type: 3}
 --- !u!70 &3590563674111028205
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -318,7 +319,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.16454884, y: -0.37002993}
+  m_Offset: {x: 0.16454884, y: -0.39814174}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -329,7 +330,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.8665759, y: 1.0669053}
+  m_Size: {x: 0.8665759, y: 1.3928208}
   m_EdgeRadius: 0
 --- !u!50 &401055228800080114
 Rigidbody2D:

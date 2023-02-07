@@ -125,6 +125,7 @@ public class Enemy : MonoBehaviour
     {
         if (_enemyType == 3)
         {
+            Debug.Log("Yes were running this");
             if (transform.position.x <= -9)
             {
                 _movingLeft = false;

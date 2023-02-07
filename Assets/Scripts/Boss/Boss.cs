@@ -2,12 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.Build;
 using UnityEngine;
+using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class Boss : MonoBehaviour
 {
     [SerializeField] Sprite[] _bossSprites;
     [SerializeField] int _bossState;
     SpawnManager _spawnManager;
+    [SerializeField] GameObject _laserPrefab;
     bool _bossEntered = false;
     bool _repairing = false;
     float _speed = 2f;
@@ -35,6 +37,7 @@ public class Boss : MonoBehaviour
         {
             _bossEntered = true;
             _movingSpeed = 1.5f;
+            StartCoroutine("BossBasicAttack");
 
         }
         else
@@ -67,6 +70,35 @@ public class Boss : MonoBehaviour
         }
         
 
+    }
+
+    IEnumerator BossBasicAttack()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(2f);
+            GameObject bLaser1 = Instantiate(_laserPrefab, transform.position + new Vector3(1.44f, -2.0f, 0), Quaternion.identity);
+            GameObject bLaser2 = Instantiate(_laserPrefab, transform.position + new Vector3(-1.5f, -2.0f, 0), Quaternion.identity);
+            bLaser1.GetComponent<Laser>().EnemyOwned();
+            bLaser1.transform.localScale = new Vector3(.3f, .6f, 0);
+            bLaser2.GetComponent<Laser>().EnemyOwned();
+            bLaser2.transform.localScale = new Vector3(.3f, .6f, 0); ;
+            bLaser1.GetComponent<SpriteRenderer>().color = Color.green;
+            bLaser2.GetComponent<SpriteRenderer>().color = Color.green;
+            Debug.Break();
+        }
+       
+        
+    }
+
+    IEnumerator BossSpecialAttack()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(8f);
+            
+
+        }
     }
 
     public void UpdateBossState(int bossState)
