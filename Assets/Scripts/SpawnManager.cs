@@ -23,6 +23,7 @@ public class SpawnManager : MonoBehaviour
     [SerializeField] private float _minSpawn = 2f;
     [SerializeField] private float _maxSpawn = 4f;
     [SerializeField] private bool _enemiesHaveShields = false;
+    [SerializeField] GameObject[] _enemies;
     private bool _spawnerTest = false;
     private int _enemiesSlain;
     private int _enemiesToSpawn = 4;
@@ -58,9 +59,9 @@ public class SpawnManager : MonoBehaviour
         switch (wave)
         {
             case int i when (i > 0 && i <= 2):
-                _enemyTypesToSpawn[3] = 1;
+                _enemyTypesToSpawn[0] = 1;
 
-               // _enemiesHaveShields = true;
+               
                 break;
             case int i when (i > 2 && i <= 4):
                 _enemyTypesToSpawn[1] = 1;
@@ -68,6 +69,7 @@ public class SpawnManager : MonoBehaviour
                 _maxSpawn = 3.5f;
                 break;
             case int i when (i > 4 && i <= 6):
+                _enemiesHaveShields = true;
                 _enemyTypesToSpawn[4] = 1;
                 _enemyTypesToSpawn[5] = 1;
                 break;
@@ -83,6 +85,12 @@ public class SpawnManager : MonoBehaviour
                 }
                 _enemyTypesToSpawn[7] = 1;
                 _bossWave = true;
+                _enemies = GameObject.FindGameObjectsWithTag("Enemy");
+                    foreach (GameObject enemy in _enemies)
+                    {
+                        Destroy(enemy);
+                    }
+                
                 break;
             /*case int i when (i >= 8 && i < 12):
                 _enemyTypesToSpawn[2] = 1;

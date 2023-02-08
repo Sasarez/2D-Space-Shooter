@@ -14,6 +14,7 @@ public class UIManager : MonoBehaviour
     [SerializeField]private TextMeshProUGUI _waveText;
     [SerializeField] GameObject _healthBar;
     [SerializeField] GameObject _healthColorBar;
+    [SerializeField] GameObject _bossBar;
     private int _ammoMax;
     [SerializeField]
     private Image _livesImage;
@@ -42,6 +43,10 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    public void EnableBossBar()
+    {
+        _bossBar.SetActive(true);
+    }
     public void WaveDisplay(int wave, int enemiestospawn, int enemieskilled)
     {
         if (wave != 10)
@@ -72,7 +77,7 @@ public class UIManager : MonoBehaviour
     }
     public void UpdateBossColor(Color bossColor)
     {
-        _healthColorBar.GetComponent<SpriteRenderer>().color = bossColor;
+        _healthColorBar.GetComponent<Image>().color = bossColor;
     }
     public int GetAmmoMax() { return _ammoMax; }
     public void UpdateGas(float gas)

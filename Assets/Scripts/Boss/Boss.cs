@@ -31,8 +31,7 @@ public class Boss : MonoBehaviour
         {
             Debug.LogError("The UI Manager on the Boss is NULL");
         }
-        //_uiManager.UpdateBossHealth(_bossMaxHealth, _bossCurrentHealth);
-        //_uiManager.UpdateBossColor(Color.black);
+        
         _spawnManager = GameObject.Find("SpawnManager").GetComponent<SpawnManager>();
         if (_spawnManager == null)
         {
@@ -48,6 +47,7 @@ public class Boss : MonoBehaviour
         {
             _bossEntered = true;
             _movingSpeed = 1.5f;
+            _uiManager.EnableBossBar();
             StartCoroutine("BossBasicAttack");
             StartCoroutine("BossSpecialAttack");
 
