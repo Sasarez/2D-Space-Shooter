@@ -10,6 +10,7 @@ public class Boss : MonoBehaviour
     [SerializeField] int _bossState;
     SpawnManager _spawnManager;
     [SerializeField] GameObject _laserPrefab;
+    [SerializeField] GameObject _bombPrefab;
     bool _bossEntered = false;
     bool _repairing = false;
     float _speed = 2f;
@@ -38,6 +39,7 @@ public class Boss : MonoBehaviour
             _bossEntered = true;
             _movingSpeed = 1.5f;
             StartCoroutine("BossBasicAttack");
+            StartCoroutine("BossSpecialAttack");
 
         }
         else
@@ -85,7 +87,7 @@ public class Boss : MonoBehaviour
             bLaser2.transform.localScale = new Vector3(.3f, .6f, 0); ;
             bLaser1.GetComponent<SpriteRenderer>().color = Color.green;
             bLaser2.GetComponent<SpriteRenderer>().color = Color.green;
-            Debug.Break();
+            
         }
        
         
@@ -96,8 +98,12 @@ public class Boss : MonoBehaviour
         while (true)
         {
             yield return new WaitForSeconds(8f);
+            GameObject _bomb = Instantiate(_bombPrefab, transform.position + new Vector3(-3.74f, -1.5f, 0), Quaternion.identity);
+            yield return new WaitForSeconds(1.5f);
+            GameObject _bomb3 = Instantiate(_bombPrefab, transform.position + new Vector3(0, -3.0f, 0), Quaternion.identity);
+            yield return new WaitForSeconds(1.5f);
+            GameObject _bomb2 = Instantiate(_bombPrefab, transform.position + new Vector3(3.14f, -1.5f, 0), Quaternion.identity);
             
-
         }
     }
 

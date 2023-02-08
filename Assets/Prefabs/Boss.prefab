@@ -224,6 +224,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 5297aba06d744bb48984e537e75db911, type: 3}
   _bossState: 0
   _laserPrefab: {fileID: 761591880467372920, guid: 1a61095ea4f0dbe4a912951f62201ff6, type: 3}
+  _bombPrefab: {fileID: 954958231388764287, guid: b69ee070e83eba449b7efe2435efd3e5, type: 3}
 --- !u!70 &3590563674111028205
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
