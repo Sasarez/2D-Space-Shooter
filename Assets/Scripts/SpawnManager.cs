@@ -242,7 +242,7 @@ public class SpawnManager : MonoBehaviour
             GameObject Boss = Instantiate(_bossPrefab, _spawnLocation, Quaternion.identity);
             Boss.transform.parent = _enemyContainer.transform;
             _bossSpawned = true;
-            StartCoroutine("BossSpawn");
+            //StartCoroutine("BossSpawn");
             
         }
         

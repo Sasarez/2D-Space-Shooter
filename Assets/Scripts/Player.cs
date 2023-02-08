@@ -29,7 +29,8 @@ public class Player : MonoBehaviour
     private bool _isSpeedActive = false;
     private bool _isShieldActive = false;
     private bool _isSlowActive = false;
-    private bool _godMode = true;
+    private bool _godMode = false;
+    private bool _invulnerable = false;
     private int _lives = 3;
     [SerializeField]
     private SpawnManager _spawnManager;
@@ -222,15 +223,31 @@ public class Player : MonoBehaviour
         _screenShake.ShakeScreen(1, .2f, 2f);
         if (!_godMode)
         {
-            _lives--;
+            if (!_invulnerable)
+            {
+                _lives--;
+                _invulnerable= true;
+                StartCoroutine("InvulnerabilityFrames");
+            }
+            
         }
+        
+    }
+    IEnumerator InvulnerabilityFrames()
+    {
+
+        transform.GetComponent<SpriteRenderer>().color = Color.blue;
+        yield return new WaitForSeconds(1.5f);
+        transform.GetComponent<SpriteRenderer>().color = Color.white;        
+        _invulnerable = false;
+        StopCoroutine("InvulnerabilityFrames");
         
     }
     public void Damage()
     {
 
         ShieldCheck();
-
+        
         UpdateDamage();
 
 
@@ -347,6 +364,10 @@ public class Player : MonoBehaviour
         if (collision.tag == "Projectile" && collision.GetComponent<Laser>().WhoOwns() == 1)
         {
             Destroy(collision.gameObject);
+            Damage();
+        }
+        if (collision.tag == "BombExplosion")
+        {
             Damage();
         }
     }

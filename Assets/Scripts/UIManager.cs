@@ -12,6 +12,8 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI _ammoText;
     [SerializeField]private TextMeshProUGUI _waveText;
+    [SerializeField] GameObject _healthBar;
+    [SerializeField] GameObject _healthColorBar;
     private int _ammoMax;
     [SerializeField]
     private Image _livesImage;
@@ -61,6 +63,16 @@ public class UIManager : MonoBehaviour
     {
         _ammoMax = ammo;
         UpdateAmmo(ammo);
+    }
+
+    public void UpdateBossHealth(float bossHealth, float maxHealth)
+    {
+        //.9 =9 health
+        _healthBar.transform.localScale = new Vector3(bossHealth, 1, 1);
+    }
+    public void UpdateBossColor(Color bossColor)
+    {
+        _healthColorBar.GetComponent<SpriteRenderer>().color = bossColor;
     }
     public int GetAmmoMax() { return _ammoMax; }
     public void UpdateGas(float gas)

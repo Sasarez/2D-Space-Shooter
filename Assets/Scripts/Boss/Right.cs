@@ -32,6 +32,10 @@ public class Right : MonoBehaviour
                 }
                 Destroy(other.gameObject);
             }
+            if (other.tag == "Player")
+            {
+                other.GetComponent<Player>().Damage();
+            }
         }
     }
 }

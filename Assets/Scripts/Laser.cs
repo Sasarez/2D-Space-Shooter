@@ -8,6 +8,7 @@ public class Laser : MonoBehaviour
 {
     [SerializeField] private float _speed = 3.5f;
     [SerializeField] private int _owner; //if _owner is 0 it's player, if 1 it's enemy
+    private GameManager _gameManager;
     private bool _isSpecial = false;
     private bool _altFire = false;
     private Vector3 _direction;
@@ -20,7 +21,16 @@ public class Laser : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        _player = GameObject.Find("Player").transform;
+        _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+        if (_gameManager.IsGameOver() == false)
+        {
+            _player = GameObject.Find("Player").transform;
+            if (_player == null)
+            {
+                Debug.Log("Player is NULL");
+            }
+        }
+
     }
 
     public void Special()

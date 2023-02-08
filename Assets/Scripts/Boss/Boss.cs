@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEditor.Build;
 using UnityEngine;
 using static UnityEditor.Experimental.GraphView.GraphView;
@@ -16,13 +17,22 @@ public class Boss : MonoBehaviour
     float _speed = 2f;
     bool _left = false;
     float _movingSpeed;
-    int _bossDamageDealt;
-    int _bossMaxHealth = 6;
-    int _bossCurrentHealth;
+    UIManager _uiManager;
+    float _bossMaxHealth = 1f;
+    float _bossCurrentHealth;
     // Start is called before the first frame update
     void Start()
     {
+        
+
         _bossCurrentHealth = _bossMaxHealth;
+        _uiManager = GameObject.Find("UI_Manager").GetComponent<UIManager>();
+        if (_uiManager == null)
+        {
+            Debug.LogError("The UI Manager on the Boss is NULL");
+        }
+        //_uiManager.UpdateBossHealth(_bossMaxHealth, _bossCurrentHealth);
+        //_uiManager.UpdateBossColor(Color.black);
         _spawnManager = GameObject.Find("SpawnManager").GetComponent<SpawnManager>();
         if (_spawnManager == null)
         {
@@ -82,9 +92,9 @@ public class Boss : MonoBehaviour
             GameObject bLaser1 = Instantiate(_laserPrefab, transform.position + new Vector3(1.44f, -2.0f, 0), Quaternion.identity);
             GameObject bLaser2 = Instantiate(_laserPrefab, transform.position + new Vector3(-1.5f, -2.0f, 0), Quaternion.identity);
             bLaser1.GetComponent<Laser>().EnemyOwned();
-            bLaser1.transform.localScale = new Vector3(.3f, .6f, 0);
+            bLaser1.transform.localScale = new Vector3(.3f, .3f, 0);
             bLaser2.GetComponent<Laser>().EnemyOwned();
-            bLaser2.transform.localScale = new Vector3(.3f, .6f, 0); ;
+            bLaser2.transform.localScale = new Vector3(.3f, .3f, 0); ;
             bLaser1.GetComponent<SpriteRenderer>().color = Color.green;
             bLaser2.GetComponent<SpriteRenderer>().color = Color.green;
             
@@ -120,7 +130,7 @@ public class Boss : MonoBehaviour
     void Update()
     {
 
-        _bossDamageDealt = _bossMaxHealth - _bossCurrentHealth;
+        
         UpdateBossSprite(_bossState);
         if (!_bossEntered)
         {
@@ -132,13 +142,15 @@ public class Boss : MonoBehaviour
         if (_bossState == 3 && _repairing == false)
         {
             _repairing = true;
-            Invoke("RepairBoss", 3f);
+            _uiManager.UpdateBossColor(Color.red);
+            Invoke("RepairBoss", 5f);
         }
     }
     void RepairBoss()
     {
         _bossState= 0;
         _repairing = false;
+        _uiManager.UpdateBossColor(Color.blue);
     }
     void UpdateBossSprite(int state)
     {
@@ -167,17 +179,24 @@ public class Boss : MonoBehaviour
             {
                 if (_bossState == 3)
                 {
-                    _bossCurrentHealth--;
+                    _bossCurrentHealth = _bossCurrentHealth - .1f;
+                    _uiManager.UpdateBossHealth(_bossCurrentHealth, _bossMaxHealth);
+                    
                     transform.GetComponent<SpriteRenderer>().color = Color.red;
                     BossCheckDeath();
                 }
                 else
                 {
                     transform.GetComponent<SpriteRenderer>().color = Color.blue;
+                    
                 }
                 Invoke("NormalBossColor", .1f);
 
                 Destroy(other.gameObject);
+            }
+            if (other.tag == "Player")
+            {
+                other.GetComponent<Player>().Damage();
             }
         }
     }

@@ -8,6 +8,8 @@ TagManager:
   - Projectile
   - Enemy
   - Powerup
+  - PowerupNegative
+  - BombExplosion
   layers:
   - Default
   - TransparentFX

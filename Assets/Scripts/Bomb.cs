@@ -26,8 +26,17 @@ public class Bomb : MonoBehaviour
     {
         _exploding= true;
         GameObject _explosion = Instantiate(_explosionPrefab, transform.position, Quaternion.identity);
+        _explosion.GetComponent<CircleCollider2D>().enabled = true;
         Destroy(_explosion, 1.5f);
-        Destroy(gameObject, 1.5f);
+        Destroy(gameObject, .5f);
         
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.tag == "Player")
+        {
+            other.GetComponent<Player>().Damage();
+        }
     }
 }

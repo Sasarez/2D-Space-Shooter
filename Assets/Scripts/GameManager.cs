@@ -13,6 +13,10 @@ public class GameManager : MonoBehaviour
         _isGameOver= true;
 
     }
+    public bool IsGameOver()
+    {
+        return _isGameOver;
+    }
     private void Update()
     {
         if (Input.GetKeyUp(KeyCode.R) && _isGameOver)
