@@ -27,6 +27,7 @@ public class Bomb : MonoBehaviour
         _exploding= true;
         GameObject _explosion = Instantiate(_explosionPrefab, transform.position, Quaternion.identity);
         _explosion.GetComponent<CircleCollider2D>().enabled = true;
+        _explosion.transform.localScale = new Vector3(.2f, .2f, 1);
         Destroy(_explosion, 1.5f);
         Destroy(gameObject, .5f);
         

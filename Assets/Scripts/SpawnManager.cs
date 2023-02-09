@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using TMPro;
-using TMPro.EditorUtilities;
-using UnityEditorInternal;
 using UnityEngine;
 
 public class SpawnManager : MonoBehaviour

@@ -195,7 +195,7 @@ public class Enemy : MonoBehaviour
       // Debug.DrawRay(transform.position, -transform.up * 5f, Color.blue) ;
         if (hit.collider != null)
         {
-            if (hit.collider.tag == "Powerup" && !_detectionCooldown)
+            if (hit.collider.tag == "Powerup" && !_detectionCooldown && !_enemyDying)
             {
                 _powerupDetected = true;
               
