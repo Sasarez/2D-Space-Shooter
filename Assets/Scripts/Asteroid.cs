@@ -14,7 +14,6 @@ public class Asteroid : MonoBehaviour
     GameObject _explosion;
     
 
-    // Update is called once per frame
     void Update()
     {
         this.transform.Rotate(0, 0, _speed * Time.deltaTime);

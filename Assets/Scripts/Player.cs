@@ -31,6 +31,7 @@ public class Player : MonoBehaviour
     private bool _isSlowActive = false;
     private bool _godMode = false;
     private bool _invulnerable = false;
+    private bool _playerDead;
     private int _lives = 3;
     [SerializeField]
     private SpawnManager _spawnManager;
@@ -49,6 +50,7 @@ public class Player : MonoBehaviour
     private GameObject _rightEngine;
     [SerializeField]
     private GameObject _leftEngine;
+    [SerializeField] GameObject _explosionPrefab;
     private GameObject[] _powerUpObjects;
     private GameObject[] _powerDownObjects;
     private GameObject[] _allPowerObjects;
@@ -79,11 +81,12 @@ public class Player : MonoBehaviour
             Debug.LogError("the SpriteRenderer on the Shield is NULL");
         }
         _uiManager.AmmoInitiate(_ammoCount);
+        
     }
 
     void Update()
     {
-        
+        if (_playerDead) return;
         PowerUpVacuum();
         ThrusterCoolDown();
         Movement();
@@ -134,6 +137,7 @@ public class Player : MonoBehaviour
                 _ammoCount = _uiManager.GetAmmoMax();
                 _uiManager.UpdateAmmo(_ammoCount);
                 GameObject _hLaser = Instantiate(_laser, transform.position + new Vector3(0, 1.08f, 0), Quaternion.identity);
+                _hLaser.GetComponent<SpriteRenderer>().color = Color.yellow;
                 _hLaser.GetComponent<Laser>().Special();
             }
             else if (_isTripleShotActive && !_isSpecialActive)
@@ -320,8 +324,8 @@ public class Player : MonoBehaviour
         {
             _spawnManager = GameObject.Find("SpawnManager").GetComponent<SpawnManager>();
             _spawnManager.PlayerDied();
-
-            Destroy(gameObject);
+            PlayerDeath();
+            _playerDead = true;
         }
     }
     public void HealthActive()
@@ -333,6 +337,16 @@ public class Player : MonoBehaviour
         UpdateDamage();
 
     }
+    void PlayerDeath()
+    {
+        GameObject _explosion = Instantiate(_explosionPrefab, new Vector3 (transform.position.x, transform.position.y-1.5f,0),Quaternion.identity);
+        
+        _explosion.GetComponent<SpriteRenderer>().sortingOrder = 100;
+        Destroy(_explosion, 2f);
+        Destroy(this.gameObject, 1f);
+    }
+
+    
     IEnumerator TripleShotPowerDown()
     {
         yield return new WaitForSeconds(_powerUpTime);

@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class Powerup : MonoBehaviour
 {
-    // Start is called before the first frame update
+
     [SerializeField]
     private float _powerUpSpeed = 3f;
     private Player _player;
@@ -14,14 +14,7 @@ public class Powerup : MonoBehaviour
     private int _powerUpType;
     [SerializeField]
     private AudioClip _clip;
-    private Laser _laser;
-
-    // Update is called once per frame
-    private void Start()
-    {
-        
-    }
-    void Update()
+       void Update()
     {
         transform.Translate(Vector3.down * _powerUpSpeed * Time.deltaTime);
         if (transform.position.y < -5.8)

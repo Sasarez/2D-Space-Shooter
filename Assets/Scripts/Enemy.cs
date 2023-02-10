@@ -13,6 +13,7 @@ public class Enemy : MonoBehaviour
     AudioSource _audioSource;
     [SerializeField]float _speed = 3.5f;
     private SpawnManager _spawnManager;
+   
     private Player _player;
     [SerializeField]
     private GameObject _laserPrefab;
@@ -22,6 +23,8 @@ public class Enemy : MonoBehaviour
     private float _distance;
     private Vector3 _laserRotation;
     [SerializeField] private GameObject _enemyShield;
+    [SerializeField] private GameObject _explosionPrefab;
+    GameObject _explosion;
     private bool _movingLeft;
     private bool _hasShield;
     [SerializeField] private bool _isInvincible = false;
@@ -45,15 +48,25 @@ public class Enemy : MonoBehaviour
         }
         _player = GameObject.Find("Player").GetComponent<Player>();
         if (_player == null) Debug.Log("The Player is NULL");
-        _enemyAnim = GetComponent<Animator>();
-        if (_enemyAnim == null) Debug.Log("The Animator is NULL");
+        if (_enemyType== 0)
+        {
+            _enemyAnim = GetComponent<Animator>();
+            if (_enemyAnim == null) Debug.Log("The Animator is NULL");
+        }
+        
         _audioSource = GetComponent<AudioSource>();
         if (_audioSource == null) Debug.LogError("AudioSource on the Enemy is NULL");
-      
+        
+
+        
+        
+
+        
             StartCoroutine("EnemyFire");
         
         
     }
+
     public bool IsEnemyDying()
     {
         return _enemyDying;
@@ -158,10 +171,10 @@ public class Enemy : MonoBehaviour
         {
             transform.position = new Vector2(-9.2f, Random.Range(-3.4f, 6.2f));
         }
-       // if (_enemyType == 0 || _enemyType == 4 || _enemyType == 5) 
+
         
     }
-    // Update is called once per frame
+   
     void Update()
     {
         _distance = Vector3.Distance(GetPlayerLocation(), this.transform.position);
@@ -192,15 +205,14 @@ public class Enemy : MonoBehaviour
     void ObjectRaycastCheck()
     {
         RaycastHit2D hit = Physics2D.Raycast(transform.position, -transform.up, 5f, LayerMask.GetMask("Powerup"));
-      // Debug.DrawRay(transform.position, -transform.up * 5f, Color.blue) ;
+
         if (hit.collider != null)
         {
             if (hit.collider.tag == "Powerup" && !_detectionCooldown && !_enemyDying)
             {
                 _powerupDetected = true;
               
-               // Debug.Log(hit.collider.name + " Detected");
-                   // hit.collider.transform.GetComponent<SpriteRenderer>().color = Color.red;
+
                 
                 SetUpLaser();
             }
@@ -242,12 +254,31 @@ public class Enemy : MonoBehaviour
             if (!_isInvincible)
             {
                 _enemyDying = true;
-                _enemyAnim.SetTrigger("OnEnemyDeath");
+                if (_enemyType == 0)
+                {
+                    _enemyAnim.SetTrigger("OnEnemy0Death");
+                }
+                else
+                {
+                    _explosion = Instantiate(_explosionPrefab, transform.position,Quaternion.identity);
+                    _explosion.transform.localScale = transform.localScale;
+                }
+                
                 _speed = 0;
                 StopCoroutine("EnemyFire");
-                this.GetComponent<BoxCollider2D>().enabled = false;
+                this.GetComponent<Collider2D>().enabled = false;
                 _spawnManager.EnemySlain();
-                Destroy(gameObject, 2.5f);
+                if (_explosion!= null)
+                    Destroy(_explosion, 2.5f);
+                if (_enemyType == 0)
+                {
+                    Destroy(gameObject, 2.5f);
+                }
+                else
+                {
+                    Destroy(gameObject, 1f);
+                }
+                
             }
             
         }
@@ -268,21 +299,41 @@ public class Enemy : MonoBehaviour
             {
                 _enemyDying = true;
                 Destroy(other.gameObject);
-                _enemyAnim.SetTrigger("OnEnemyDeath");
+                if (_enemyType == 0)
+                {
+                    _enemyAnim.SetTrigger("OnEnemy0Death");
+                }
+                else
+                {
+                    _explosion = Instantiate(_explosionPrefab, transform.position, Quaternion.identity);
+                    _explosion.transform.localScale = transform.localScale;
+                }
+
 
                 StopCoroutine("EnemyFire");
                 _speed = 0;
                 _audioSource.Play();
 
                 this.tag = "Undefined";
-                this.GetComponent<BoxCollider2D>().enabled = false;
+                this.GetComponent<Collider2D>().enabled = false;
                 _spawnManager.EnemySlain();
-                Destroy(gameObject, 2.5f);
+                if (_explosion != null)
+                    Destroy(_explosion, 2.5f);
+                if (_enemyType == 0)
+                {
+                    Destroy(gameObject, 2.5f);
+                }
+                else
+                {
+                    Destroy(gameObject, 1.0f);
+                }
+                
             }
            
         }
 
     }
+
 
     void PowerUpDetectionCooldown()
     {
@@ -304,6 +355,11 @@ public class Enemy : MonoBehaviour
                 _spawnPosition = new Vector2(transform.position.x - 1.5f, transform.position.y);
                 _laserRotation = new Vector3(0, 0, -90);
                 break;
+            case 5:
+                
+                _spawnPosition = new Vector2(transform.position.x, transform.position.y);
+                _laserRotation = new Vector3(0, 0, 0);
+                break;
             default:
                 _spawnPosition = new Vector2(transform.position.x, transform.position.y - 1.5f);
                 _laserRotation = new Vector3(0, 0, 0);
@@ -324,7 +380,7 @@ public class Enemy : MonoBehaviour
                 qLaser.transform.eulerAngles = _laserRotation;
                 _powerupDetected = false;
                 _detectionCooldown = true;
-               // Debug.Break();
+               
                 Invoke("PowerUpDetectionCooldown", 1.5f);
             }
         }
@@ -347,6 +403,7 @@ public class Enemy : MonoBehaviour
             laser.transform.eulerAngles = _laserRotation;
 
             AudioSource.PlayClipAtPoint(_audioLaser, new Vector3(0, 1, -10), .4f);
+           
         }
         
     }

@@ -27,6 +27,7 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI _restartText;
     private bool _isGameOver;
+    
     private bool _gameOverFlicker;
     private GameManager _gameManager;
 
@@ -42,6 +43,11 @@ public class UIManager : MonoBehaviour
             Debug.LogError("GameManager is NULL");
         }
     }
+
+  /*  private void Awake()
+    {
+        DontDestroyOnLoad(transform.gameObject);
+    }*/
 
     public void EnableBossBar()
     {
@@ -87,6 +93,7 @@ public class UIManager : MonoBehaviour
     public void UpdateScore(int score)
     {
         _scoreText.text = "Score: " + score;
+        PlayerPrefs.SetInt("score", score);
     }
 
     public void UpdateAmmo(int ammo)

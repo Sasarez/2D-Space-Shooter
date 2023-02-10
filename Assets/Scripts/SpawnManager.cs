@@ -15,13 +15,15 @@ public class SpawnManager : MonoBehaviour
     [SerializeField] private int _enemyType;
     [SerializeField] private Vector3 _spawnLocation;
     [SerializeField] private Vector3 _spawnRotation;
-    [SerializeField] private int _wave =7;
+    [SerializeField] private int _wave;
     [SerializeField] private int _enemiesSpawned;
     [SerializeField] private int[] _enemyTypesToSpawn;
     [SerializeField] private float _minSpawn = 2f;
     [SerializeField] private float _maxSpawn = 4f;
     [SerializeField] private bool _enemiesHaveShields = false;
     [SerializeField] GameObject[] _enemies;
+
+    
     private bool _spawnerTest = false;
     private int _enemiesSlain;
     private int _enemiesToSpawn = 4;
@@ -57,8 +59,8 @@ public class SpawnManager : MonoBehaviour
         switch (wave)
         {
             case int i when (i > 0 && i <= 2):
+               
                 _enemyTypesToSpawn[0] = 1;
-
                
                 break;
             case int i when (i > 2 && i <= 4):
@@ -83,20 +85,10 @@ public class SpawnManager : MonoBehaviour
                 }
                 _enemyTypesToSpawn[7] = 1;
                 _bossWave = true;
-                _enemies = GameObject.FindGameObjectsWithTag("Enemy");
-                    foreach (GameObject enemy in _enemies)
-                    {
-                        Destroy(enemy);
-                    }
+               
                 
                 break;
-            /*case int i when (i >= 8 && i < 12):
-                _enemyTypesToSpawn[2] = 1;
-                _minSpawn = 1.5f;
-                break;
-            case int i when (i >= 12 && 1 < 18):
-                _enemyTypesToSpawn[0] = 1;
-                break;*/
+
         }
         if (_spawnerTest)
         {
@@ -132,72 +124,69 @@ public class SpawnManager : MonoBehaviour
        
 
     }
-    void SpawnEnemyPreperation(int enemyType = -1)
+    void SpawnEnemyPreperation()
     {
         
     
         if ((_enemiesSpawned < _enemiesToSpawn) || _bossWave)
         {
-            ChooseAgain:
-            if (enemyType == -1)
-            {
-                enemyType = Random.Range(0, _enemyTypesToSpawn.Length);
-            } else if(_bossSpawned)
-            {
-               
-                _enemyTypesToSpawn[enemyType] = 1;
-            }
+            
+        ChooseAgain:
+            
+            
+                _enemyType = Random.Range(0, _enemyTypesToSpawn.Length);
+         
             
 
-            if (enemyType == 0 && _enemyTypesToSpawn[enemyType] == 1)
+            if (_enemyType == 0 && _enemyTypesToSpawn[_enemyType] == 1)
             {
                 _spawnLocation = new Vector3(Random.Range(-8.5f, 8.5f), 8, 0);
                 _spawnRotation = new Vector3(0, 0, 0);
             }
-            else if (enemyType == 1 && _enemyTypesToSpawn[enemyType] == 1)
+            else if (_enemyType == 1 && _enemyTypesToSpawn[_enemyType] == 1)
             {
                 _spawnLocation = new Vector3(-9.2f, Random.Range(-3.4f, 6.2f));
                 _spawnRotation = new Vector3(0, 0, 90);
             }
-            else if (enemyType == 2 && _enemyTypesToSpawn[enemyType] == 1)
+            else if (_enemyType == 2 && _enemyTypesToSpawn[_enemyType] == 1)
             {
                 _spawnLocation = new Vector3(9.2f, Random.Range(-3.4f, 6.2f));
                 _spawnRotation = new Vector3(0, 0, -90);
             }
-            else if (enemyType == 3 && _enemyTypesToSpawn[enemyType] == 1)
+            else if (_enemyType == 3 && _enemyTypesToSpawn[_enemyType] == 1)
             {
 
                 _spawnLocation = new Vector3(Random.Range(-8.5f, 8.5f), 5.64f, 0);
                 _spawnRotation = new Vector3(0, 0, 0);
 
             }
-            else if (enemyType ==4 && _enemyTypesToSpawn[enemyType] == 1)
+            else if (_enemyType ==4 && _enemyTypesToSpawn[_enemyType] == 1)
             {
                 _spawnLocation = new Vector3(Random.Range(-8.5f, 8.5f), 8, 0);
                 _spawnRotation = new Vector3(0, 0, 0);
             }
-            else if (enemyType == 5 && _enemyTypesToSpawn[enemyType] == 1)
+            else if (_enemyType == 5 && _enemyTypesToSpawn[_enemyType] == 1)
             {
                 _spawnLocation = new Vector3(Random.Range(-8.5f, 8.5f), 8, 0);
                 _spawnRotation = new Vector3(0, 0, 0);
             }
-            else if (enemyType == 6 && _enemyTypesToSpawn[enemyType] == 1)
+            else if (_enemyType == 6 && _enemyTypesToSpawn[_enemyType] == 1)
             {
                 _spawnLocation = new Vector3(Random.Range(-8.5f, 8.5f), 8, 0);
                 _spawnRotation = new Vector3(0, 0, 0);
             }
-            else if (enemyType == 7 && _enemyTypesToSpawn[enemyType] == 1)
+            else if (_enemyType == 7 && _enemyTypesToSpawn[_enemyType] == 1)
             {
                 _spawnLocation = new Vector3(0, 12, 0);
-                //_spawnRotation = new Vector3(0, 0, 0);
+                
                 
             }
             else
             {
-                enemyType = -1;
+                
                 goto ChooseAgain;
             }
-            _enemyType= enemyType;
+            
             
             Invoke("SpawnEnemy", Random.Range(_minSpawn, _maxSpawn));
 
@@ -217,7 +206,7 @@ public class SpawnManager : MonoBehaviour
         
             if ((_enemiesSpawned < _enemiesToSpawn) || _bossSpawned)
             {
-                GameObject newEnemy = Instantiate(_enemyPrefab, _spawnLocation, Quaternion.identity);
+                GameObject newEnemy = Instantiate(_enemies[_enemyType], _spawnLocation, Quaternion.identity);
                 newEnemy.transform.parent = _enemyContainer.transform;
                 newEnemy.transform.eulerAngles = _spawnRotation;
                 newEnemy.transform.GetComponent<Enemy>().SetEnemyType(_enemyType);
@@ -232,15 +221,9 @@ public class SpawnManager : MonoBehaviour
                     }
                 }
                 _enemiesSpawned++;
-                if (_bossWave)
-                {
-
-                }
-                else
-                {
-
-                SpawnEnemyPreperation();
-                }
+                if (!_bossWave)
+                    SpawnEnemyPreperation();
+                
             
 
         } if (_bossSpawned==false && _bossWave)
@@ -248,7 +231,7 @@ public class SpawnManager : MonoBehaviour
             GameObject Boss = Instantiate(_bossPrefab, _spawnLocation, Quaternion.identity);
             Boss.transform.parent = _enemyContainer.transform;
             _bossSpawned = true;
-            //StartCoroutine("BossSpawn");
+            
             
         }
         
@@ -279,32 +262,7 @@ public class SpawnManager : MonoBehaviour
         _enemiesSlain++;
         CheckDeathCount();
     }
-    public void BossSlain()
-    {
-        Debug.Log("end the game");
-        StopCoroutine("BossSpawn");
-    }
 
-    IEnumerator BossSpawn()
-    {
-        while (true)
-        {
-        yield return new WaitForSeconds(Random.Range(2f, 4f));
-            _enemiesAlive = _enemiesSpawned - _enemiesSlain;
-            Debug.Log("Enemies Alive " + _enemiesAlive);
-            if (_enemiesAlive >= 2)
-            {
-                
-            }
-            else
-            {
-               
-                SpawnEnemyPreperation(3);
-            }
-            
-           
-        }
-    }
     IEnumerator SpawnPowerup()
     {
         while (!playerDied)
@@ -319,7 +277,7 @@ public class SpawnManager : MonoBehaviour
             
             int _randomPowerup = Random.Range(0, 72);
 
-
+            
             Instantiate(_powerups[SelectPowerup(_randomPowerup)], new Vector3(Random.Range(-8.5f, 8.5f), 8, 0), Quaternion.identity);
 
         }

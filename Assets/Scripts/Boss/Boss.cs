@@ -2,41 +2,43 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-
+using UnityEngine.SceneManagement;
 
 public class Boss : MonoBehaviour
 {
     [SerializeField] Sprite[] _bossSprites;
     [SerializeField] int _bossState;
-    SpawnManager _spawnManager;
     [SerializeField] GameObject _laserPrefab;
     [SerializeField] GameObject _bombPrefab;
+    [SerializeField] GameObject _explosionPrefab;
+    GameManager _gameManager;
     bool _bossEntered = false;
     bool _repairing = false;
+    bool _bossDead = false;
     float _speed = 2f;
     bool _left = false;
     float _movingSpeed;
     UIManager _uiManager;
     float _bossMaxHealth = 1f;
     float _bossCurrentHealth;
-    // Start is called before the first frame update
+   
     void Start()
     {
-        
 
         _bossCurrentHealth = _bossMaxHealth;
+        _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+        if (_gameManager == null)
+        {
+            Debug.LogError("The GameManager on the Boss is null");
+        }
         _uiManager = GameObject.Find("UI_Manager").GetComponent<UIManager>();
+        
         if (_uiManager == null)
         {
             Debug.LogError("The UI Manager on the Boss is NULL");
         }
-        
-        _spawnManager = GameObject.Find("SpawnManager").GetComponent<SpawnManager>();
-        if (_spawnManager == null)
-        {
-            Debug.Log("the Spawn Manager is NULL");
-        }
-    }
+       
+   }
 
   
 
@@ -59,7 +61,7 @@ public class Boss : MonoBehaviour
 
     void BossMovement()
     {
-
+        if (_bossDead) return;
         // boss X boundaries are -4.4, and 4.4
         if (_left)
         {
@@ -115,6 +117,29 @@ public class Boss : MonoBehaviour
             
         }
     }
+    IEnumerator BossDeath()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(.2f);
+            GameObject _explosion1 = Instantiate(_explosionPrefab, transform.position + new Vector3(-3.7f, 0f, 0), Quaternion.identity);
+            yield return new WaitForSeconds(.2f);
+            GameObject _explosion2 = Instantiate(_explosionPrefab, transform.position + new Vector3(3.14f, 0f, 0), Quaternion.identity);
+            yield return new WaitForSeconds(.2f);
+            GameObject _explosion3 = Instantiate(_explosionPrefab, transform.position, Quaternion.identity);
+            yield return new WaitForSeconds(.2f);
+            transform.GetComponent<SpriteRenderer>().enabled = false;
+            yield return new WaitForSeconds(2f);
+            Destroy(_explosion1);
+            Destroy(_explosion2);
+            Destroy(_explosion3);
+            yield return new WaitForSeconds(.2f);
+
+            _gameManager.GameWon();
+            Destroy(gameObject);
+
+        }
+    }
 
     public void UpdateBossState(int bossState)
     {
@@ -141,7 +166,7 @@ public class Boss : MonoBehaviour
         if (_bossState == 3 && _repairing == false)
         {
             _repairing = true;
-            _uiManager.UpdateBossColor(Color.red);
+            //_uiManager.UpdateBossColor(Color.red);
             Invoke("RepairBoss", 5f);
         }
     }
@@ -160,8 +185,12 @@ public class Boss : MonoBehaviour
     {
         if (_bossCurrentHealth <= 0)
         {
-            _spawnManager.BossSlain();
-            Destroy(this.gameObject);
+            
+            _bossDead = true;
+            StopCoroutine("BossBasicAttack");
+            StopCoroutine("BossSpecialAttack");
+            StartCoroutine("BossDeath");
+            
         }
     }
 
@@ -176,12 +205,12 @@ public class Boss : MonoBehaviour
         {
             if (other.tag == "Projectile" && other.GetComponent<Laser>().WhoOwns()==0)
             {
-                if (_bossState == 3)
+                if (_bossState == 3 && !_bossDead)
                 {
                     _bossCurrentHealth = _bossCurrentHealth - .1f;
                     _uiManager.UpdateBossHealth(_bossCurrentHealth, _bossMaxHealth);
                     
-                    transform.GetComponent<SpriteRenderer>().color = Color.red;
+                    
                     BossCheckDeath();
                 }
                 else

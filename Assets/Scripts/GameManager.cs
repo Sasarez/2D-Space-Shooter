@@ -13,6 +13,11 @@ public class GameManager : MonoBehaviour
         _isGameOver= true;
 
     }
+
+    public void GameWon()
+    {
+        SceneManager.LoadScene(2);
+    }
     public bool IsGameOver()
     {
         return _isGameOver;
